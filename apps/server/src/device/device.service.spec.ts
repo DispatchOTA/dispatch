@@ -74,7 +74,9 @@ describe('DeviceService', () => {
 
       const result = await service.findAll();
       expect(result).toEqual([mockDevice]);
-      expect(mockRepository.find).toHaveBeenCalled();
+      expect(mockRepository.find).toHaveBeenCalledWith({
+        order: { createdAt: 'DESC' }
+      });
     });
 
     it('should return an empty array when no devices exist', async () => {

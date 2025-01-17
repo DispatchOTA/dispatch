@@ -33,7 +33,11 @@ export class DeviceService {
   }
 
   async findAll(): Promise<Device[]> {
-    return this.deviceRepository.find();
+    return this.deviceRepository.find({
+      order: {
+        createdAt: 'DESC'
+      }
+    });
   }
 
   async update(uuid: string, updateDeviceDto: UpdateDeviceDto): Promise<Device> {
