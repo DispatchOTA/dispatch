@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { ENV_DEVELOPMENT, envValidationSchema } from './common';
+import { DeviceModule } from './device/device.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { ENV_DEVELOPMENT, envValidationSchema } from './common';
         synchronize: configService.get<string>('NODE_ENV') === ENV_DEVELOPMENT,
       }),
     }),
+    DeviceModule,
   ],
   controllers: [AppController],
 })
