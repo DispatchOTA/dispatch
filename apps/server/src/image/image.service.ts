@@ -5,6 +5,7 @@ import { Image } from './entities/image.entity';
 import { Repository } from 'typeorm';
 import { UpdateImageDto } from './dtos/update-image.dto';
 import { CreateImageDto } from './dtos/create-image.dto';
+import { ImageVersion } from '../image-version/entities/image-version.entity';
 
 @Injectable()
 export class ImageService {
@@ -59,6 +60,9 @@ export class ImageService {
       throw new NotFoundException('Image not found');
     }
     this.logger.log(`Deleted image: ${uuid}`);
-    await this.imageRepository.delete(uuid);
+    await this.imageRepository.manager.transaction(async (transactionalEntityManager) => {
+      await transactionalEntityManager.delete(ImageVersion, { image: { uuid } });
+      await transactionalEntityManager.delete(Image, uuid);
+    });
   }
 }

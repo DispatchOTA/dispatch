@@ -1,15 +1,15 @@
-import { ImageVersion } from '../../image-version/entities/image-version.entity';
+import { Image } from '../../image/entities/image.entity';
 import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
   CreateDateColumn,
-  OneToMany,
+  ManyToOne,
 } from 'typeorm';
 
 @Entity()
-export class Image {
+export class ImageVersion {
   @PrimaryGeneratedColumn('uuid')
   uuid: string;
 
@@ -25,6 +25,6 @@ export class Image {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @OneToMany(() => ImageVersion, (imageVersion) => imageVersion.image)
-  versions: ImageVersion[];
+  @ManyToOne(() => Image, (image) => image.versions)
+  image: Image;
 }
