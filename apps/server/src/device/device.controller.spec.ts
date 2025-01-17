@@ -12,8 +12,8 @@ describe('DeviceController', () => {
   let service: DeviceService;
 
   const mockDevice: Device = {
+    uuid: 'uuid',
     id: 'id',
-    name: 'Test Device',
     description: 'A test device',
     state: 'active',
     pollingTime: '30',
@@ -51,7 +51,7 @@ describe('DeviceController', () => {
   describe('POST /devices', () => {
     it('should create a new device', async () => {
       const createDeviceDto: CreateDeviceDto = {
-        name: 'Test Device',
+        id: 'Test Device',
         description: 'A test device',
       };
 
@@ -82,13 +82,13 @@ describe('DeviceController', () => {
     });
   });
 
-  describe('GET /devices/:id', () => {
+  describe('GET /devices/:uuid', () => {
     it('should return a single device', async () => {
       mockDeviceService.findOne.mockResolvedValue(mockDevice);
 
-      const result = await controller.findOne({ id: 'id' });
+      const result = await controller.findOne({ uuid: 'uuid' });
       expect(result).toEqual(mockDevice);
-      expect(service.findOne).toHaveBeenCalledWith('id');
+      expect(service.findOne).toHaveBeenCalledWith('uuid');
     });
 
     it('should return a 404 error if the device is not found', async () => {
@@ -96,15 +96,15 @@ describe('DeviceController', () => {
         new NotFoundException('Device not found'),
       );
 
-      await expect(controller.findOne({ id: 'id' })).rejects.toThrow(
+      await expect(controller.findOne({ uuid: 'uuid' })).rejects.toThrow(
         NotFoundException,
       );
     });
   });
 
-  describe('PUT /devices/:id', () => {
+  describe('PUT /devices/:uuid', () => {
     const updateDeviceDto: UpdateDeviceDto = {
-      name: 'Updated Device',
+      id: 'Updated Device',
       description: 'An updated test device',
     };
 
@@ -112,9 +112,9 @@ describe('DeviceController', () => {
       const updatedDevice = { ...mockDevice, ...updateDeviceDto };
       mockDeviceService.update.mockResolvedValue(updatedDevice);
 
-      const result = await controller.update({ id: 'id' }, updateDeviceDto);
+      const result = await controller.update({ uuid: 'uuid' }, updateDeviceDto);
       expect(result).toEqual(updatedDevice);
-      expect(service.update).toHaveBeenCalledWith('id', updateDeviceDto);
+      expect(service.update).toHaveBeenCalledWith('uuid', updateDeviceDto);
     });
 
     it('should return a 404 error if the device is not found', async () => {
@@ -123,18 +123,18 @@ describe('DeviceController', () => {
       );
 
       await expect(
-        controller.update({ id: 'id' }, updateDeviceDto),
+        controller.update({ uuid: 'uuid' }, updateDeviceDto),
       ).rejects.toThrow(NotFoundException);
     });
   });
 
-  describe('DELETE /devices/:id', () => {
+  describe('DELETE /devices/:uuid', () => {
     it('should delete a device and return success message', async () => {
       mockDeviceService.delete.mockResolvedValue(undefined);
 
-      const result = await controller.delete({ id: 'id' });
+      const result = await controller.delete({ uuid: 'uuid' });
       expect(result).toEqual(new MessageDto('Device has been deleted'));
-      expect(service.delete).toHaveBeenCalledWith('id');
+      expect(service.delete).toHaveBeenCalledWith('uuid');
     });
 
     it('should return a 404 error if the device is not found', async () => {
@@ -142,7 +142,7 @@ describe('DeviceController', () => {
         new NotFoundException('Device not found'),
       );
 
-      await expect(controller.delete({ id: 'id' })).rejects.toThrow(
+      await expect(controller.delete({ uuid: 'uuid' })).rejects.toThrow(
         NotFoundException,
       );
     });

@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { DeviceService } from './device.service';
 import { Device } from './entities/device.entity';
-import { IDParamDto } from '../common/dtos/id-param.dto';
+import { UUIDParamDto } from '../common/dtos/uuiid-param.dto';
 import { CreateDeviceDto } from './dtos/create-device.dto';
 import { UpdateDeviceDto } from './dtos/update-device.dto';
 import { MessageDto } from '../common/dtos/message.dto';
@@ -20,19 +20,19 @@ export class DeviceController {
     return this.deviceService.findAll();
   }
 
-  @Get('devices/:id')
-  async findOne(@Param() params: IDParamDto): Promise<Device> {
-    return this.deviceService.findOne(params.id);
+  @Get('devices/:uuid')
+  async findOne(@Param() params: UUIDParamDto): Promise<Device> {
+    return this.deviceService.findOne(params.uuid);
   }
 
-  @Put('devices/:id')
-  async update(@Param() params: IDParamDto, @Body() updateDeviceDto: UpdateDeviceDto) {
-    return this.deviceService.update(params.id, updateDeviceDto);
+  @Put('devices/:uuid')
+  async update(@Param() params: UUIDParamDto, @Body() updateDeviceDto: UpdateDeviceDto) {
+    return this.deviceService.update(params.uuid, updateDeviceDto);
   }
 
-  @Delete('devices/:id')
-  async delete(@Param() params: IDParamDto): Promise<MessageDto> {
-    await this.deviceService.delete(params.id);
+  @Delete('devices/:uuid')
+  async delete(@Param() params: UUIDParamDto): Promise<MessageDto> {
+    await this.deviceService.delete(params.uuid);
     return new MessageDto('Device has been deleted');
   }
 }

@@ -12,8 +12,8 @@ describe('DeviceService', () => {
   let repository: Repository<Device>;
 
   const mockDevice: Device = {
+    uuid: 'uuid',
     id: 'id',
-    name: 'Test Device',
     description: 'A test device',
     state: 'active',
     pollingTime: '30',
@@ -51,7 +51,7 @@ describe('DeviceService', () => {
   describe('create', () => {
     it('should successfully create a device', async () => {
       const createDeviceDto: CreateDeviceDto = {
-        name: 'Test Device',
+        id: 'Test Device',
         description: 'A test device'
       };
 
@@ -61,7 +61,7 @@ describe('DeviceService', () => {
       expect(result).toEqual(mockDevice);
       expect(mockRepository.save).toHaveBeenCalledWith(
         expect.objectContaining({
-          name: createDeviceDto.name,
+          id: createDeviceDto.id,
           description: createDeviceDto.description,
         })
       );
@@ -90,26 +90,26 @@ describe('DeviceService', () => {
     it('should return a single device', async () => {
       mockRepository.findOne.mockResolvedValue(mockDevice);
 
-      const result = await service.findOne('id');
+      const result = await service.findOne('uuid');
       expect(result).toEqual(mockDevice);
       expect(mockRepository.findOne).toHaveBeenCalledWith({
-        where: { id: 'id' }
+        where: { uuid: 'uuid' }
       });
     });
 
     it('should throw NotFoundException when device is not found', async () => {
       mockRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.findOne('id')).rejects.toThrow(NotFoundException);
+      await expect(service.findOne('uuid')).rejects.toThrow(NotFoundException);
       expect(mockRepository.findOne).toHaveBeenCalledWith({
-        where: { id: 'id' }
+        where: { uuid: 'uuid' }
       });
     });
   });
 
   describe('update', () => {
     const updateDeviceDto: UpdateDeviceDto = {
-      name: 'Updated Device',
+      id: 'Updated Device',
       description: 'An updated test device'
     };
 
@@ -118,10 +118,10 @@ describe('DeviceService', () => {
       const updatedDevice = { ...mockDevice, ...updateDeviceDto };
       mockRepository.save.mockResolvedValue(updatedDevice);
 
-      const result = await service.update('id', updateDeviceDto);
+      const result = await service.update('uuid', updateDeviceDto);
       expect(result).toEqual(updatedDevice);
       expect(mockRepository.findOne).toHaveBeenCalledWith({
-        where: { id: 'id' }
+        where: { uuid: 'uuid' }
       });
       expect(mockRepository.save).toHaveBeenCalledWith(updatedDevice);
     });
@@ -129,9 +129,9 @@ describe('DeviceService', () => {
     it('should throw NotFoundException when device to update is not found', async () => {
       mockRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.update('id', updateDeviceDto)).rejects.toThrow(NotFoundException);
+      await expect(service.update('uuid', updateDeviceDto)).rejects.toThrow(NotFoundException);
       expect(mockRepository.findOne).toHaveBeenCalledWith({
-        where: { id: 'id' }
+        where: { uuid: 'uuid' }
       });
     });
   });
@@ -141,19 +141,19 @@ describe('DeviceService', () => {
       mockRepository.findOne.mockResolvedValue(mockDevice);
       mockRepository.delete.mockResolvedValue({ affected: 1 });
 
-      await service.delete('id');
+      await service.delete('uuid');
       expect(mockRepository.findOne).toHaveBeenCalledWith({
-        where: { id: 'id' }
+        where: { uuid: 'uuid' }
       });
-      expect(mockRepository.delete).toHaveBeenCalledWith('id');
+      expect(mockRepository.delete).toHaveBeenCalledWith('uuid');
     });
 
     it('should throw NotFoundException when device to delete is not found', async () => {
       mockRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.delete('id')).rejects.toThrow(NotFoundException);
+      await expect(service.delete('uuid')).rejects.toThrow(NotFoundException);
       expect(mockRepository.findOne).toHaveBeenCalledWith({
-        where: { id: 'id' }
+        where: { uuid: 'uuid' }
       });
     });
   });

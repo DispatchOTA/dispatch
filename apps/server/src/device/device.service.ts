@@ -17,16 +17,16 @@ export class DeviceService {
 
   async create(createDeviceDto: CreateDeviceDto): Promise<Device> {
     const device = new Device();
-    device.name = createDeviceDto.name;
+    device.id = createDeviceDto.id;
     device.description = createDeviceDto.description;
-    this.logger.log(`Creating device: ${device.id}`);
+    this.logger.log(`Creating device: ${device.uuid}`);
     return this.deviceRepository.save(device);
   }
 
-  async findOne(id: string): Promise<Device> {
-    const device = await this.deviceRepository.findOne({ where: { id } });
+  async findOne(uuid: string): Promise<Device> {
+    const device = await this.deviceRepository.findOne({ where: { uuid } });
     if (!device) {
-      this.logger.error(`Device not found: ${id}`);
+      this.logger.error(`Device not found: ${uuid}`);
       throw new NotFoundException('Device not found');
     }
     return device;
@@ -36,25 +36,25 @@ export class DeviceService {
     return this.deviceRepository.find();
   }
 
-  async update(id: string, updateDeviceDto: UpdateDeviceDto): Promise<Device> {
-    const device = await this.findOne(id);
+  async update(uuid: string, updateDeviceDto: UpdateDeviceDto): Promise<Device> {
+    const device = await this.findOne(uuid);
     if (!device) {
-      this.logger.error(`Device not found: ${id}`);
+      this.logger.error(`Device not found: ${uuid}`);
       throw new NotFoundException('Device not found');
     }
-    device.name = updateDeviceDto.name;
+    device.id = updateDeviceDto.id;
     device.description = updateDeviceDto.description;
-    this.logger.log(`Updating device: ${device.id}`);
+    this.logger.log(`Updating device: ${device.uuid}`);
     return this.deviceRepository.save(device);
   }
 
-  async delete(id: string): Promise<void> {
-    const device = await this.findOne(id);
+  async delete(uuid: string): Promise<void> {
+    const device = await this.findOne(uuid);
     if (!device) {
-      this.logger.error(`Device not found: ${id}`);
+      this.logger.error(`Device not found: ${uuid}`);
       throw new NotFoundException('Device not found');
     }
-    this.logger.log(`Deleted device: ${id}`);
-    await this.deviceRepository.delete(id);
+    this.logger.log(`Deleted device: ${uuid}`);
+    await this.deviceRepository.delete(uuid);
   }
 }

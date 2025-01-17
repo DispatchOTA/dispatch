@@ -9,10 +9,10 @@ import {
 @Entity()
 export class Device {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  uuid: string;
 
   @Column()
-  name: string;
+  id: string;
 
   @Column()
   description: string;

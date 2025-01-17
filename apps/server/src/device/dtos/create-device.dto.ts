@@ -6,7 +6,7 @@ export class CreateDeviceDto {
   @IsString()
   @MinLength(MIN_NAME_LEN)
   @MaxLength(MAX_NAME_LEN)
-  name: string;
+  id: string;
 
   @IsOptional()
   @IsString()
