@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 
 @Entity()
-export class Device {
+export class Image {
   @PrimaryGeneratedColumn('uuid')
   uuid: string;
 
@@ -16,12 +16,6 @@ export class Device {
 
   @Column()
   description: string;
-
-  @Column()
-  state: string;
-
-  @Column()
-  pollingTime: string;
 
   @CreateDateColumn()
   createdAt: Date;
