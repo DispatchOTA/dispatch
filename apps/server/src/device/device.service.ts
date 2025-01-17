@@ -19,12 +19,14 @@ export class DeviceService {
     const device = new Device();
     device.name = createDeviceDto.name;
     device.description = createDeviceDto.description;
+    this.logger.log(`Creating device: ${device.id}`);
     return this.deviceRepository.save(device);
   }
 
   async findOne(id: string): Promise<Device> {
     const device = await this.deviceRepository.findOne({ where: { id } });
     if (!device) {
+      this.logger.error(`Device not found: ${id}`);
       throw new NotFoundException('Device not found');
     }
     return device;
@@ -37,19 +39,22 @@ export class DeviceService {
   async update(id: string, updateDeviceDto: UpdateDeviceDto): Promise<Device> {
     const device = await this.findOne(id);
     if (!device) {
+      this.logger.error(`Device not found: ${id}`);
       throw new NotFoundException('Device not found');
     }
     device.name = updateDeviceDto.name;
     device.description = updateDeviceDto.description;
+    this.logger.log(`Updating device: ${device.id}`);
     return this.deviceRepository.save(device);
   }
 
   async delete(id: string): Promise<void> {
     const device = await this.findOne(id);
     if (!device) {
+      this.logger.error(`Device not found: ${id}`);
       throw new NotFoundException('Device not found');
     }
+    this.logger.log(`Deleted device: ${id}`);
     await this.deviceRepository.delete(id);
   }
-  
 }
