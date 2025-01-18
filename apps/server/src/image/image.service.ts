@@ -53,10 +53,10 @@ export class ImageService {
     });
   }
 
-  private async findImage(imageUuid: string): Promise<Image> {
-    const image = await this.imageRepository.findOne({ where: { uuid: imageUuid } });
+  private async findImage(uuid: string): Promise<Image> {
+    const image = await this.imageRepository.findOne({ where: { uuid } });
     if (!image) {
-      this.logger.error(`Image not found: ${imageUuid}`);
+      this.logger.error(`Image not found: ${uuid}`);
       throw new NotFoundException('Image not found');
     }
     return image;
