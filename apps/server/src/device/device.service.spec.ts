@@ -44,6 +44,7 @@ describe('DeviceService', () => {
 
     service = module.get<DeviceService>(DeviceService);
     repository = module.get<Repository<Device>>(getRepositoryToken(Device));
+    jest.clearAllMocks();
   });
 
   it('should be defined', () => {
@@ -195,13 +196,20 @@ describe('DeviceService', () => {
         deployments: mockDeployments
       };
 
-      mockRepository.findOne.mockResolvedValue(deviceWithDeployments);
+      mockRepository.findOne.mockResolvedValueOnce(deviceWithDeployments);
 
       const result = await service.findDeployments('uuid');
       expect(result).toEqual(mockDeployments);
-      expect(mockRepository.findOne).toHaveBeenCalledWith({
+      expect(mockRepository.findOne).toHaveBeenCalledTimes(1);
+      expect(mockRepository.findOne).toHaveBeenLastCalledWith({
         where: { uuid: 'uuid' },
-        relations: ['deployments']
+        relations: ['deployments'],
+        relationLoadStrategy: 'query',
+        order: {
+          deployments: {
+            createdAt: 'DESC'
+          }
+        }
       });
     });
 
@@ -211,23 +219,37 @@ describe('DeviceService', () => {
         deployments: []
       };
 
-      mockRepository.findOne.mockResolvedValue(deviceWithNoDeployments);
+      mockRepository.findOne.mockResolvedValueOnce(deviceWithNoDeployments);
 
       const result = await service.findDeployments('uuid');
       expect(result).toEqual([]);
-      expect(mockRepository.findOne).toHaveBeenCalledWith({
+      expect(mockRepository.findOne).toHaveBeenCalledTimes(1);
+      expect(mockRepository.findOne).toHaveBeenLastCalledWith({
         where: { uuid: 'uuid' },
-        relations: ['deployments']
+        relations: ['deployments'],
+        relationLoadStrategy: 'query',
+        order: {
+          deployments: {
+            createdAt: 'DESC'
+          }
+        }
       });
     });
 
     it('should throw NotFoundException when device is not found', async () => {
-      mockRepository.findOne.mockResolvedValue(null);
+      mockRepository.findOne.mockResolvedValueOnce(null);
 
       await expect(service.findDeployments('uuid')).rejects.toThrow(NotFoundException);
-      expect(mockRepository.findOne).toHaveBeenCalledWith({
+      expect(mockRepository.findOne).toHaveBeenCalledTimes(1);
+      expect(mockRepository.findOne).toHaveBeenLastCalledWith({
         where: { uuid: 'uuid' },
-        relations: ['deployments']
+        relations: ['deployments'],
+        relationLoadStrategy: 'query',
+        order: {
+          deployments: {
+            createdAt: 'DESC'
+          }
+        }
       });
     });
   });
