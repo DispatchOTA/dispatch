@@ -69,14 +69,4 @@ export class DeviceService {
     this.logger.log(`Updating device: ${device.uuid}`);
     return this.deviceRepository.save(device);
   }
-
-  async delete(uuid: string): Promise<void> {
-    const device = await this.findOne(uuid);
-    if (!device) {
-      this.logger.error(`Device not found: ${uuid}`);
-      throw new NotFoundException('Device not found');
-    }
-    this.logger.log(`Deleted device: ${uuid}`);
-    await this.deviceRepository.delete(uuid);
-  }
 }

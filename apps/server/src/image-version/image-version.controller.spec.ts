@@ -138,32 +138,4 @@ describe('ImageVersionController', () => {
       await expect(controller.update({ imageUuid: 'imageUuid', versionUuid: 'versionUuid' }, updateImageVersionDto)).rejects.toThrow(NotFoundException);
     });
   });
-
-  describe('DELETE /images/:imageUuid/versions/:versionUuid', () => {
-    it('should delete a image version and return success message', async () => {
-      mockImageVersionService.delete.mockResolvedValue(undefined);
-
-      const result = await controller.delete({ imageUuid: 'imageUuid', versionUuid: 'versionUuid' });
-      expect(result).toEqual(new MessageDto('Image version has been deleted'));
-      expect(service.delete).toHaveBeenCalledWith('imageUuid', 'versionUuid');
-    });
-
-    it('should return a 404 error if the image is not found', async () => {
-      mockImageVersionService.delete.mockRejectedValue(
-        new NotFoundException('Image not found'),
-      );
-
-      await expect(controller.delete({ imageUuid: 'imageUuid', versionUuid: 'versionUuid' })).rejects.toThrow(
-        NotFoundException,
-      );
-    });
-
-    it('should return a 404 error if the image version is not found', async () => {
-      mockImageVersionService.delete.mockRejectedValue(
-        new NotFoundException('Image version not found'),
-      );
-
-      await expect(controller.delete({ imageUuid: 'imageUuid', versionUuid: 'versionUuid' })).rejects.toThrow(NotFoundException);
-    });
-  });
 });

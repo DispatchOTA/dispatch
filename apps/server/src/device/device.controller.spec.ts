@@ -196,24 +196,4 @@ describe('DeviceController', () => {
       ).rejects.toThrow(NotFoundException);
     });
   });
-
-  describe('DELETE /devices/:uuid', () => {
-    it('should delete a device and return success message', async () => {
-      mockDeviceService.delete.mockResolvedValue(undefined);
-
-      const result = await controller.delete({ uuid: 'uuid' });
-      expect(result).toEqual(new MessageDto('Device has been deleted'));
-      expect(service.delete).toHaveBeenCalledWith('uuid');
-    });
-
-    it('should return a 404 error if the device is not found', async () => {
-      mockDeviceService.delete.mockRejectedValue(
-        new NotFoundException('Device not found'),
-      );
-
-      await expect(controller.delete({ uuid: 'uuid' })).rejects.toThrow(
-        NotFoundException,
-      );
-    });
-  });
 });

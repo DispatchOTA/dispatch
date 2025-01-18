@@ -29,10 +29,4 @@ export class ImageController {
   async update(@Param() params: UUIDParamDto, @Body() updateImageDto: UpdateImageDto) {
     return this.imageService.update(params.uuid, updateImageDto);
   }
-
-  @Delete('images/:uuid')
-  async delete(@Param() params: UUIDParamDto): Promise<MessageDto> {
-    await this.imageService.delete(params.uuid);
-    return new MessageDto('Image has been deleted');
-  }
 }

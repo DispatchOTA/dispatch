@@ -178,36 +178,4 @@ describe('ImageVersionService', () => {
         .rejects.toThrow(NotFoundException);
     });
   });
-
-  describe('delete', () => {
-    it('should delete an image version', async () => {
-      mockImageRepository.findOne.mockResolvedValue(mockImage);
-      mockImageVersionRepository.findOne.mockResolvedValue(mockImageVersion);
-      mockImageVersionRepository.delete.mockResolvedValue({ affected: 1 });
-
-      await service.delete('imageUuid', 'versionUuid');
-      expect(mockImageRepository.findOne).toHaveBeenCalledWith({
-        where: { uuid: 'imageUuid' }
-      });
-      expect(mockImageVersionRepository.findOne).toHaveBeenCalledWith({
-        where: { uuid: 'versionUuid', image: mockImage }
-      });
-      expect(mockImageVersionRepository.delete).toHaveBeenCalledWith('versionUuid');
-    });
-
-    it('should throw NotFoundException when image is not found', async () => {
-      mockImageRepository.findOne.mockResolvedValue(null);
-
-      await expect(service.delete('imageUuid', 'versionUuid'))
-        .rejects.toThrow(NotFoundException);
-    });
-
-    it('should throw NotFoundException when image version is not found', async () => {
-      mockImageRepository.findOne.mockResolvedValue(mockImage);
-      mockImageVersionRepository.findOne.mockResolvedValue(null);
-
-      await expect(service.delete('imageUuid', 'versionUuid'))
-        .rejects.toThrow(NotFoundException);
-    });
-  });
 }); 
