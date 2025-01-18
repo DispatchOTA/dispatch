@@ -4,4 +4,8 @@ export class CreateDeploymentDto {
   @IsUUID()
   @IsNotEmpty()
   deviceUuid: string;
+
+  @IsUUID()
+  @IsNotEmpty()
+  imageVersionUuid: string;
 }

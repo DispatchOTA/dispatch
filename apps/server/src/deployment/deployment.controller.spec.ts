@@ -23,6 +23,22 @@ describe('DeploymentController', () => {
       createdAt: new Date(),
       updatedAt: new Date(),
       deployments: []
+    },
+    imageVersion: {
+      uuid: 'versionUuid',
+      id: 'versionId',
+      description: 'test version',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      image: {
+        uuid: 'imageUuid',
+        id: 'imageId',
+        description: 'test image',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        versions: []
+      },
+      deployments: []
     }
   };
 
@@ -54,7 +70,7 @@ describe('DeploymentController', () => {
     it('should create a new deployment', async () => {
       const createDeploymentDto: CreateDeploymentDto = {
         deviceUuid: 'deviceUuid',
-        // imageVersionUuid: 'versionUuid'
+        imageVersionUuid: 'versionUuid'
       };
 
       mockDeploymentService.create.mockResolvedValue(mockDeployment);
@@ -67,10 +83,22 @@ describe('DeploymentController', () => {
     it('should return 404 if device is not found', async () => {
       const createDeploymentDto: CreateDeploymentDto = {
         deviceUuid: 'nonexistentDeviceUuid',
-        // imageVersionUuid: 'versionUuid'
+        imageVersionUuid: 'versionUuid'
       };
 
       mockDeploymentService.create.mockRejectedValue(new NotFoundException('Device not found'));
+
+      await expect(controller.create(createDeploymentDto)).rejects.toThrow(NotFoundException);
+      expect(service.create).toHaveBeenCalledWith(createDeploymentDto);
+    });
+
+    it('should return 404 if image version is not found', async () => {
+      const createDeploymentDto: CreateDeploymentDto = {
+        deviceUuid: 'nonexistentDeviceUuid',
+        imageVersionUuid: 'versionUuid'
+      };
+
+      mockDeploymentService.create.mockRejectedValue(new NotFoundException('Image version not found'));
 
       await expect(controller.create(createDeploymentDto)).rejects.toThrow(NotFoundException);
       expect(service.create).toHaveBeenCalledWith(createDeploymentDto);

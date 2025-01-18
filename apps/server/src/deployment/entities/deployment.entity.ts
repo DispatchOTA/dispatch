@@ -1,3 +1,4 @@
+import { ImageVersion } from '../../image-version/entities/image-version.entity';
 import { Device } from '../../device/entities/device.entity';
 import {
   Entity,
@@ -40,4 +41,7 @@ export class Deployment {
 
   @ManyToOne(() => Device, (device) => device.deployments)
   device: Device;
+
+  @ManyToOne(() => ImageVersion, (imageVersion) => imageVersion.deployments)
+  imageVersion: ImageVersion;
 }
