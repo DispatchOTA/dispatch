@@ -17,6 +17,7 @@ describe('ImageController', () => {
     description: 'A test image',
     createdAt: new Date(),
     updatedAt: new Date(),
+    versions: [],
   };
 
   const mockImageService = {
