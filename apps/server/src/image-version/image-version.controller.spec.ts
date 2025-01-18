@@ -78,16 +78,16 @@ describe('ImageVersionController', () => {
   });
 
   describe('GET /images/:uuid/versions', () => {
-    it('should return an array of images', async () => {
-      const images = [mockImageVersion];
-      mockImageVersionService.findAll.mockResolvedValue(images);
+    it('should return an array of image versions', async () => {
+      const imageVersions = [mockImageVersion];
+      mockImageVersionService.findAll.mockResolvedValue(imageVersions);
 
       const result = await controller.findAll({ uuid: 'imageUuid' });
-      expect(result).toEqual(images);
+      expect(result).toEqual(imageVersions);
       expect(service.findAll).toHaveBeenCalledWith('imageUuid');
     });
 
-    it('should return an empty array if no images are found', async () => {
+    it('should return an empty array if no image versions are found', async () => {
       mockImageVersionService.findAll.mockResolvedValue([]);
 
       const result = await controller.findAll({ uuid: 'imageUuid' });

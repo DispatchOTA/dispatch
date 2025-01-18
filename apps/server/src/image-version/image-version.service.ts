@@ -19,7 +19,7 @@ export class ImageVersionService {
   ) {}
 
   async create(imageUuid: string, createImageVersionDto: CreateImageVersionDto): Promise<ImageVersion> {
-    const image = await this.validateImage(imageUuid);
+    const image = await this.findImage(imageUuid);
     const imageVersion = new ImageVersion();
     imageVersion.id = createImageVersionDto.id;
     imageVersion.description = createImageVersionDto.description;
@@ -29,7 +29,7 @@ export class ImageVersionService {
   }
 
   async findAll(imageUuid: string): Promise<ImageVersion[]> {
-    const image = await this.validateImage(imageUuid);
+    const image = await this.findImage(imageUuid);
     return this.imageVersionRepository.find({
       where: { image },
       order: {
@@ -39,7 +39,7 @@ export class ImageVersionService {
   }
 
   async update(imageUuid: string, versionUuid: string, updateImageVersionDto: UpdateImageVersionDto): Promise<ImageVersion> {
-    const image = await this.validateImage(imageUuid);
+    const image = await this.findImage(imageUuid);
     const imageVersion = await this.imageVersionRepository.findOne({ where: { uuid: versionUuid, image } });
     if (!imageVersion) {
       this.logger.error(`Image version not found: ${versionUuid}`);
@@ -52,7 +52,7 @@ export class ImageVersionService {
   }
 
   async delete(imageUuid: string, versionUuid: string): Promise<void> {
-    const image = await this.validateImage(imageUuid);
+    const image = await this.findImage(imageUuid);
     const imageVersion = await this.imageVersionRepository.findOne({ where: { uuid: versionUuid, image } });
     if (!imageVersion) {
       this.logger.error(`Image version not found: ${versionUuid}`);
@@ -62,7 +62,7 @@ export class ImageVersionService {
     await this.imageVersionRepository.delete(versionUuid);
   }
 
-  private async validateImage(imageUuid: string): Promise<Image> {
+  private async findImage(imageUuid: string): Promise<Image> {
     const image = await this.imageRepository.findOne({ where: { uuid: imageUuid } });
     if (!image) {
       this.logger.error(`Image not found: ${imageUuid}`);

@@ -5,15 +5,7 @@ import { UUIDParamDto } from '../common/dtos/uuiid-param.dto';
 import { CreateImageVersionDto } from './dtos/create-image-version.dto';
 import { UpdateImageVersionDto } from './dtos/update-image-version.dto';
 import { MessageDto } from '../common/dtos/message.dto';
-import { IsUUID } from 'class-validator';
-
-export class ImageVersionParamDto {
-  @IsUUID()
-  imageUuid: string;
-
-  @IsUUID()
-  versionUuid: string;
-}
+import { ImageVersionParamDto } from './dtos/image-version-param.dto';
 
 @Controller()
 export class ImageVersionController {

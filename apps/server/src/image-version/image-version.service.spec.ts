@@ -118,7 +118,7 @@ describe('ImageVersionService', () => {
       });
     });
 
-    it('should return an empty array when no versions exist', async () => {
+    it('should return an empty array when no image versions exist', async () => {
       mockImageRepository.findOne.mockResolvedValue(mockImage);
       mockImageVersionRepository.find.mockResolvedValue([]);
 
