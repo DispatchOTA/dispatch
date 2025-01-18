@@ -6,6 +6,7 @@ import { ENV_DEVELOPMENT, envValidationSchema } from './common';
 import { DeviceModule } from './device/device.module';
 import { ImageVersionModule } from './image-version/image-version.module';
 import { DeploymentModule } from './deployment/deployment.module';
+import { DdiModule } from './ddi/ddi.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { DeploymentModule } from './deployment/deployment.module';
     DeviceModule,
     ImageVersionModule,
     DeploymentModule,
+    DdiModule,
   ],
   controllers: [AppController],
 })
