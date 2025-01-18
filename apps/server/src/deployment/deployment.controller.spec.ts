@@ -3,6 +3,7 @@ import { DeploymentController } from './deployment.controller';
 import { DeploymentService } from './deployment.service';
 import { CreateDeploymentDto } from './dtos/create-deployment.dto';
 import { Deployment, DeploymentState } from './entities/deployment.entity';
+import { NotFoundException } from '@nestjs/common';
 
 describe('DeploymentController', () => {
   let controller: DeploymentController;
@@ -12,7 +13,17 @@ describe('DeploymentController', () => {
     uuid: 'uuid',
     state: DeploymentState.SCHEDULED,
     createdAt: new Date(),
-    updatedAt: new Date()
+    updatedAt: new Date(),
+    device: {
+      uuid: 'deviceUuid',
+      id: 'deviceId',
+      description: 'test device',
+      state: 'active',
+      pollingTime: '60',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      deployments: []
+    }
   };
 
   const mockDeploymentService = {
@@ -42,7 +53,7 @@ describe('DeploymentController', () => {
   describe('POST /deployments', () => {
     it('should create a new deployment', async () => {
       const createDeploymentDto: CreateDeploymentDto = {
-        // deviceUuid: 'deviceUuid',
+        deviceUuid: 'deviceUuid',
         // imageVersionUuid: 'versionUuid'
       };
 
@@ -53,7 +64,17 @@ describe('DeploymentController', () => {
       expect(service.create).toHaveBeenCalledWith(createDeploymentDto);
     });
 
+    it('should return 404 if device is not found', async () => {
+      const createDeploymentDto: CreateDeploymentDto = {
+        deviceUuid: 'nonexistentDeviceUuid',
+        // imageVersionUuid: 'versionUuid'
+      };
 
+      mockDeploymentService.create.mockRejectedValue(new NotFoundException('Device not found'));
+
+      await expect(controller.create(createDeploymentDto)).rejects.toThrow(NotFoundException);
+      expect(service.create).toHaveBeenCalledWith(createDeploymentDto);
+    });
   });
 
   describe('GET /deployments', () => {

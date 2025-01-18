@@ -1,9 +1,11 @@
+import { Deployment } from '../../deployment/entities/deployment.entity';
 import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
   CreateDateColumn,
+  OneToMany,
 } from 'typeorm';
 
 @Entity()
@@ -28,4 +30,7 @@ export class Device {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @OneToMany(() => Deployment, (deployment) => deployment.device)
+  deployments: Deployment[];
 }

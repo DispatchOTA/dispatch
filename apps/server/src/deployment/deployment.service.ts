@@ -4,6 +4,8 @@ import { Logger } from '@nestjs/common';
 import { Deployment, DeploymentState } from './entities/deployment.entity';
 import { Repository } from 'typeorm';
 import { CreateDeploymentDto } from './dtos/create-deployment.dto';
+import { Device } from '../device/entities/device.entity';
+import { ImageVersion } from '../image-version/entities/image-version.entity';
 
 @Injectable()
 export class DeploymentService {
@@ -12,10 +14,23 @@ export class DeploymentService {
   constructor(
     @InjectRepository(Deployment)
     private readonly deploymentRepository: Repository<Deployment>,
+    @InjectRepository(Device)
+    private readonly deviceRepository: Repository<Device>,
+    @InjectRepository(ImageVersion)
+    private readonly imageVersionRepository: Repository<ImageVersion>,
   ) {}
 
   async create(createDeploymentDto: CreateDeploymentDto): Promise<Deployment> {
+    const device = await this.deviceRepository.findOne({
+      where: { uuid: createDeploymentDto.deviceUuid }
+    });
+    if (!device) {
+      this.logger.error(`Device not found: ${createDeploymentDto.deviceUuid}`);
+      throw new NotFoundException(`Device not found`);
+    }
+
     const deployment = new Deployment();
+    deployment.device = device;
     deployment.state = DeploymentState.SCHEDULED;
     this.logger.log(`Creating deployment: ${deployment.uuid}`);
     return this.deploymentRepository.save(deployment);

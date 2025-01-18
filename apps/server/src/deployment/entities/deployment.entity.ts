@@ -1,9 +1,12 @@
+import { Device } from '../../device/entities/device.entity';
 import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
   CreateDateColumn,
+  OneToMany,
+  ManyToOne,
 } from 'typeorm';
 
 export enum DeploymentState {
@@ -34,4 +37,7 @@ export class Deployment {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @ManyToOne(() => Device, (device) => device.deployments)
+  device: Device;
 }
