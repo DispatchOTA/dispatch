@@ -1,11 +1,11 @@
 import { IsNotEmpty, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
-import { MAX_DESC_LEN, MAX_NAME_LEN, MIN_DESC_LEN, MIN_NAME_LEN } from '../../common/consts';
+import { MAX_DESC_LEN, MAX_ID_LEN, MIN_DESC_LEN, MIN_ID_LEN } from '../../common/consts';
 
 export class UpdateDeviceDto {
   @IsNotEmpty()
   @IsString()
-  @MinLength(MIN_NAME_LEN)
-  @MaxLength(MAX_NAME_LEN)
+  @MinLength(MIN_ID_LEN)
+  @MaxLength(MAX_ID_LEN)
   id: string;
 
   @IsOptional()

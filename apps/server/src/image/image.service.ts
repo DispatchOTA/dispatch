@@ -25,12 +25,7 @@ export class ImageService {
   }
 
   async findOne(uuid: string): Promise<Image> {
-    const image = await this.imageRepository.findOne({ where: { uuid } });
-    if (!image) {
-      this.logger.error(`Image not found: ${uuid}`);
-      throw new NotFoundException('Image not found');
-    }
-    return image;
+    return this.findImage(uuid);
   }
 
   async findAll(): Promise<Image[]> {
@@ -42,11 +37,7 @@ export class ImageService {
   }
 
   async update(uuid: string, updateImageDto: UpdateImageDto): Promise<Image> {
-    const image = await this.findOne(uuid);
-    if (!image) {
-      this.logger.error(`Image not found: ${uuid}`);
-      throw new NotFoundException('Image not found');
-    }
+    const image = await this.findImage(uuid);
     image.id = updateImageDto.id;
     image.description = updateImageDto.description;
     this.logger.log(`Updating image: ${image.id}`);
@@ -54,15 +45,20 @@ export class ImageService {
   }
 
   async delete(uuid: string): Promise<void> {
-    const image = await this.findOne(uuid);
+    const image = await this.findImage(uuid);
+    this.logger.log(`Deleted image: ${uuid}`);
+    await this.imageRepository.manager.transaction(async (transactionalEntityManager) => {
+      await transactionalEntityManager.delete(ImageVersion, { image: { uuid: image.uuid } });
+      await transactionalEntityManager.delete(Image, image.uuid);
+    });
+  }
+
+  private async findImage(uuid: string): Promise<Image> {
+    const image = await this.imageRepository.findOne({ where: { uuid } });
     if (!image) {
       this.logger.error(`Image not found: ${uuid}`);
       throw new NotFoundException('Image not found');
     }
-    this.logger.log(`Deleted image: ${uuid}`);
-    await this.imageRepository.manager.transaction(async (transactionalEntityManager) => {
-      await transactionalEntityManager.delete(ImageVersion, { image: { uuid } });
-      await transactionalEntityManager.delete(Image, uuid);
-    });
+    return image;
   }
 }
