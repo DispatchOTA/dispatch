@@ -6,6 +6,7 @@ import { Device } from './entities/device.entity';
 import { CreateDeviceDto } from './dtos/create-device.dto';
 import { UpdateDeviceDto } from './dtos/update-device.dto';
 import { NotFoundException } from '@nestjs/common';
+import { DeploymentState } from '../deployment/entities/deployment.entity';
 
 describe('DeviceService', () => {
   let service: DeviceService;
@@ -157,6 +158,76 @@ describe('DeviceService', () => {
       await expect(service.delete('uuid')).rejects.toThrow(NotFoundException);
       expect(mockRepository.findOne).toHaveBeenCalledWith({
         where: { uuid: 'uuid' }
+      });
+    });
+  });
+
+  describe('findDeployments', () => {
+    it('should return deployments for a device', async () => {
+      const mockDeployments = [
+        {
+          uuid: 'deployment-uuid-1',
+          state: DeploymentState.SCHEDULED,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          device: mockDevice,
+          imageVersion: {
+            uuid: 'version-uuid',
+            id: 'version-id',
+            description: 'test version',
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            image: {
+              uuid: 'image-uuid',
+              id: 'image-id',
+              description: 'test image',
+              createdAt: new Date(),
+              updatedAt: new Date(),
+              versions: []
+            },
+            deployments: []
+          }
+        }
+      ];
+
+      const deviceWithDeployments = {
+        ...mockDevice,
+        deployments: mockDeployments
+      };
+
+      mockRepository.findOne.mockResolvedValue(deviceWithDeployments);
+
+      const result = await service.findDeployments('uuid');
+      expect(result).toEqual(mockDeployments);
+      expect(mockRepository.findOne).toHaveBeenCalledWith({
+        where: { uuid: 'uuid' },
+        relations: ['deployments']
+      });
+    });
+
+    it('should return empty array if device has no deployments', async () => {
+      const deviceWithNoDeployments = {
+        ...mockDevice,
+        deployments: []
+      };
+
+      mockRepository.findOne.mockResolvedValue(deviceWithNoDeployments);
+
+      const result = await service.findDeployments('uuid');
+      expect(result).toEqual([]);
+      expect(mockRepository.findOne).toHaveBeenCalledWith({
+        where: { uuid: 'uuid' },
+        relations: ['deployments']
+      });
+    });
+
+    it('should throw NotFoundException when device is not found', async () => {
+      mockRepository.findOne.mockResolvedValue(null);
+
+      await expect(service.findDeployments('uuid')).rejects.toThrow(NotFoundException);
+      expect(mockRepository.findOne).toHaveBeenCalledWith({
+        where: { uuid: 'uuid' },
+        relations: ['deployments']
       });
     });
   });

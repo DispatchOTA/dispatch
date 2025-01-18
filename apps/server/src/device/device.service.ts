@@ -40,6 +40,18 @@ export class DeviceService {
     });
   }
 
+  async findDeployments(uuid: string) {
+    const device = await this.deviceRepository.findOne({
+      where: { uuid },
+      relations: ['deployments'],
+    });
+    if (!device) {
+      this.logger.error(`Device not found: ${uuid}`);
+      throw new NotFoundException('Device not found');
+    }
+    return device.deployments;
+  }
+
   async update(uuid: string, updateDeviceDto: UpdateDeviceDto): Promise<Device> {
     const device = await this.findOne(uuid);
     if (!device) {
