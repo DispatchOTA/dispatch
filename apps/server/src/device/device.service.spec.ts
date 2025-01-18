@@ -141,28 +141,6 @@ describe('DeviceService', () => {
     });
   });
 
-  describe('delete', () => {
-    it('should delete a device', async () => {
-      mockRepository.findOne.mockResolvedValue(mockDevice);
-      mockRepository.delete.mockResolvedValue({ affected: 1 });
-
-      await service.delete('uuid');
-      expect(mockRepository.findOne).toHaveBeenCalledWith({
-        where: { uuid: 'uuid' }
-      });
-      expect(mockRepository.delete).toHaveBeenCalledWith('uuid');
-    });
-
-    it('should throw NotFoundException when device to delete is not found', async () => {
-      mockRepository.findOne.mockResolvedValue(null);
-
-      await expect(service.delete('uuid')).rejects.toThrow(NotFoundException);
-      expect(mockRepository.findOne).toHaveBeenCalledWith({
-        where: { uuid: 'uuid' }
-      });
-    });
-  });
-
   describe('findDeployments', () => {
     it('should return deployments for a device', async () => {
       const mockDeployments = [

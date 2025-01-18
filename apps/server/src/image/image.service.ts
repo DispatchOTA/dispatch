@@ -44,15 +44,6 @@ export class ImageService {
     return this.imageRepository.save(image);
   }
 
-  async delete(uuid: string): Promise<void> {
-    const image = await this.findImage(uuid);
-    this.logger.log(`Deleted image: ${uuid}`);
-    await this.imageRepository.manager.transaction(async (transactionalEntityManager) => {
-      await transactionalEntityManager.delete(ImageVersion, { image: { uuid: image.uuid } });
-      await transactionalEntityManager.delete(Image, image.uuid);
-    });
-  }
-
   private async findImage(uuid: string): Promise<Image> {
     const image = await this.imageRepository.findOne({ where: { uuid } });
     if (!image) {

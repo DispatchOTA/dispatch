@@ -28,10 +28,4 @@ export class ImageVersionController {
   ) {
     return this.imageVersionService.update(params.imageUuid, params.versionUuid, updateImageVersionDto);
   }
-
-  @Delete('images/:imageUuid/versions/:versionUuid')
-  async delete(@Param() params: ImageVersionParamDto): Promise<MessageDto> {
-    await this.imageVersionService.delete(params.imageUuid, params.versionUuid);
-    return new MessageDto('Image version has been deleted');
-  }
 }

@@ -51,17 +51,6 @@ export class ImageVersionService {
     return this.imageVersionRepository.save(imageVersion);
   }
 
-  async delete(imageUuid: string, versionUuid: string): Promise<void> {
-    const image = await this.findImage(imageUuid);
-    const imageVersion = await this.imageVersionRepository.findOne({ where: { uuid: versionUuid, image } });
-    if (!imageVersion) {
-      this.logger.error(`Image version not found: ${versionUuid}`);
-      throw new NotFoundException('Image version not found');
-    }
-    this.logger.log(`Deleted image version: ${versionUuid}`);
-    await this.imageVersionRepository.delete(versionUuid);
-  }
-
   private async findImage(imageUuid: string): Promise<Image> {
     const image = await this.imageRepository.findOne({ where: { uuid: imageUuid } });
     if (!image) {

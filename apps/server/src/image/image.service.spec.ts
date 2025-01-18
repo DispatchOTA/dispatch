@@ -144,48 +144,4 @@ describe('ImageService', () => {
       });
     });
   });
-
-  describe('delete', () => {
-    it('should delete an image', async () => {
-      mockRepository.findOne.mockResolvedValue(mockImage);
-      const mockTransactionalEntityManager = {
-        delete: jest.fn().mockResolvedValue({ affected: 1 })
-      };
-      mockRepository.manager.transaction = jest.fn().mockImplementation(async (callback) => {
-        await callback(mockTransactionalEntityManager);
-      });
-
-      await service.delete('uuid');
-      expect(mockRepository.findOne).toHaveBeenCalledWith({
-        where: { uuid: 'uuid' }
-      });
-      expect(mockTransactionalEntityManager.delete).toHaveBeenCalledWith(Image, 'uuid');
-    });
-
-    it('should throw NotFoundException when image to delete is not found', async () => {
-      mockRepository.findOne.mockResolvedValue(null);
-
-      await expect(service.delete('uuid')).rejects.toThrow(NotFoundException);
-      expect(mockRepository.findOne).toHaveBeenCalledWith({
-        where: { uuid: 'uuid' }
-      });
-    });
-
-    it('should delete all image versions when deleting an image', async () => {
-      mockRepository.findOne.mockResolvedValue(mockImage);
-      const mockTransactionalEntityManager = {
-        delete: jest.fn().mockResolvedValue({ affected: 1 })
-      };
-      mockRepository.manager.transaction = jest.fn().mockImplementation(async (callback) => {
-        await callback(mockTransactionalEntityManager);
-      });
-
-      await service.delete('uuid');
-      expect(mockRepository.findOne).toHaveBeenCalledWith({
-        where: { uuid: 'uuid' }
-      });
-      expect(mockTransactionalEntityManager.delete).toHaveBeenCalledWith(ImageVersion, { image: { uuid: 'uuid' } });
-      expect(mockTransactionalEntityManager.delete).toHaveBeenCalledWith(Image, 'uuid');
-    });
-  });
 }); 

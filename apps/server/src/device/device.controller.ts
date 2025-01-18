@@ -34,10 +34,4 @@ export class DeviceController {
   async update(@Param() params: UUIDParamDto, @Body() updateDeviceDto: UpdateDeviceDto) {
     return this.deviceService.update(params.uuid, updateDeviceDto);
   }
-
-  @Delete('devices/:uuid')
-  async delete(@Param() params: UUIDParamDto): Promise<MessageDto> {
-    await this.deviceService.delete(params.uuid);
-    return new MessageDto('Device has been deleted');
-  }
 }

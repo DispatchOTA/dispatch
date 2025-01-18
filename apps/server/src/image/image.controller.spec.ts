@@ -126,24 +126,4 @@ describe('ImageController', () => {
       ).rejects.toThrow(NotFoundException);
     });
   });
-
-  describe('DELETE /images/:uuid', () => {
-    it('should delete a image and return success message', async () => {
-      mockImageService.delete.mockResolvedValue(undefined);
-
-      const result = await controller.delete({ uuid: 'uuid' });
-      expect(result).toEqual(new MessageDto('Image has been deleted'));
-      expect(service.delete).toHaveBeenCalledWith('uuid');
-    });
-
-    it('should return a 404 error if the image is not found', async () => {
-      mockImageService.delete.mockRejectedValue(
-        new NotFoundException('Image not found'),
-      );
-
-      await expect(controller.delete({ uuid: 'uuid' })).rejects.toThrow(
-        NotFoundException,
-      );
-    });
-  });
 });
