@@ -25,6 +25,11 @@ export class DeviceController {
     return this.deviceService.findOne(params.uuid);
   }
 
+  @Get('devices/:uuid/deployments')
+  async findDeployments(@Param() params: UUIDParamDto) {
+    return this.deviceService.findDeployments(params.uuid);
+  }
+
   @Put('devices/:uuid')
   async update(@Param() params: UUIDParamDto, @Body() updateDeviceDto: UpdateDeviceDto) {
     return this.deviceService.update(params.uuid, updateDeviceDto);

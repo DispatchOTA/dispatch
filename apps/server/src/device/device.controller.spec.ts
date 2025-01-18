@@ -6,6 +6,8 @@ import { UpdateDeviceDto } from './dtos/update-device.dto';
 import { Device } from './entities/device.entity';
 import { MessageDto } from '../common/dtos/message.dto';
 import { NotFoundException } from '@nestjs/common';
+import { Deployment, DeploymentState } from '../deployment/entities/deployment.entity';
+import { ImageVersion } from '../image-version/entities/image-version.entity';
 
 describe('DeviceController', () => {
   let controller: DeviceController;
@@ -22,10 +24,47 @@ describe('DeviceController', () => {
     deployments: [],
   };
 
+  const mockImageVersion: ImageVersion = {
+    uuid: 'uuid',
+    id: 'id',
+    description: 'A test image version',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    image: {
+      uuid: 'imageUuid',
+      id: 'imageId',
+      description: 'A test image',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      versions: [],
+    },
+    deployments: [],
+  };
+
+  const mockDeployments: Deployment[] = [
+    {
+      uuid: 'deployment-uuid-1',
+      state: DeploymentState.SCHEDULED,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      device: mockDevice,
+      imageVersion: mockImageVersion,
+    },
+    {
+      uuid: 'deployment-uuid-2',
+      state: DeploymentState.SCHEDULED,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      device: mockDevice,
+      imageVersion: mockImageVersion,
+    },
+  ];
+
   const mockDeviceService = {
     create: jest.fn(),
     findAll: jest.fn(),
     findOne: jest.fn(),
+    findDeployments: jest.fn(),
     update: jest.fn(),
     delete: jest.fn(),
   };
@@ -102,6 +141,35 @@ describe('DeviceController', () => {
       );
     });
   });
+
+  describe('GET /devices/:uuid/deployments', () => {
+    it('should return deployments for a device', async () => {
+      mockDeviceService.findDeployments.mockResolvedValue(mockDeployments);
+
+      const result = await controller.findDeployments({ uuid: 'uuid' });
+      expect(result).toEqual(mockDeployments);
+      expect(service.findDeployments).toHaveBeenCalledWith('uuid');
+    });
+
+    it('should return an empty array if device has no deployments', async () => {
+      mockDeviceService.findDeployments.mockResolvedValue([]);
+
+      const result = await controller.findDeployments({ uuid: 'uuid' });
+      expect(result).toEqual([]);
+      expect(service.findDeployments).toHaveBeenCalledWith('uuid');
+    });
+
+    it('should return a 404 error if the device is not found', async () => {
+      mockDeviceService.findDeployments.mockRejectedValue(
+        new NotFoundException('Device not found'),
+      );
+
+      await expect(controller.findDeployments({ uuid: 'uuid' })).rejects.toThrow(
+        NotFoundException,
+      );
+    });
+  });
+
 
   describe('PUT /devices/:uuid', () => {
     const updateDeviceDto: UpdateDeviceDto = {
