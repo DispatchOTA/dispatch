@@ -28,7 +28,8 @@ describe('ImageVersionService', () => {
     description: 'A test image version',
     createdAt: new Date(),
     updatedAt: new Date(),
-    image: mockImage
+    image: mockImage,
+    deployments: [],
   };
 
   const mockImageVersionRepository = {

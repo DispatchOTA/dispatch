@@ -29,8 +29,17 @@ export class DeploymentService {
       throw new NotFoundException(`Device not found`);
     }
 
+    const imageVersion = await this.imageVersionRepository.findOne({
+      where: { uuid: createDeploymentDto.imageVersionUuid }
+    });
+    if (!imageVersion) {
+      this.logger.error(`Image version not found: ${createDeploymentDto.imageVersionUuid}`);
+      throw new NotFoundException(`Image version not found`);
+    }
+
     const deployment = new Deployment();
     deployment.device = device;
+    deployment.imageVersion = imageVersion;
     deployment.state = DeploymentState.SCHEDULED;
     this.logger.log(`Creating deployment: ${deployment.uuid}`);
     return this.deploymentRepository.save(deployment);

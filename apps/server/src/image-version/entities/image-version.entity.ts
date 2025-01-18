@@ -1,3 +1,4 @@
+import { Deployment } from '../../deployment/entities/deployment.entity';
 import { Image } from '../../image/entities/image.entity';
 import {
   Entity,
@@ -6,6 +7,7 @@ import {
   UpdateDateColumn,
   CreateDateColumn,
   ManyToOne,
+  OneToMany,
 } from 'typeorm';
 
 @Entity()
@@ -27,4 +29,7 @@ export class ImageVersion {
 
   @ManyToOne(() => Image, (image) => image.versions)
   image: Image;
+
+  @OneToMany(() => Deployment, (deployment) => deployment.imageVersion)
+  deployments: Deployment[];
 }

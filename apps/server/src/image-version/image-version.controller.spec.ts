@@ -25,6 +25,7 @@ describe('ImageVersionController', () => {
       updatedAt: new Date(),
       versions: [],
     },
+    deployments: [],
   };
 
   const mockImageVersionService = {

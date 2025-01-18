@@ -4,6 +4,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { ENV_DEVELOPMENT, envValidationSchema } from './common';
 import { DeviceModule } from './device/device.module';
+import { ImageVersionModule } from './image-version/image-version.module';
+import { DeploymentModule } from './deployment/deployment.module';
 
 @Module({
   imports: [
@@ -22,6 +24,8 @@ import { DeviceModule } from './device/device.module';
       }),
     }),
     DeviceModule,
+    ImageVersionModule,
+    DeploymentModule,
   ],
   controllers: [AppController],
 })

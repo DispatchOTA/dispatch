@@ -22,7 +22,7 @@ describe('DeploymentService', () => {
     pollingTime: '60',
     createdAt: new Date(),
     updatedAt: new Date(),
-    deployments: []
+    deployments: [],
   };
 
   const mockImageVersion: ImageVersion = {
@@ -38,7 +38,8 @@ describe('DeploymentService', () => {
       createdAt: new Date(),
       updatedAt: new Date(),
       versions: []
-    }
+    },
+    deployments: [],
   };
 
   const mockDeployment: Deployment = {
@@ -46,7 +47,8 @@ describe('DeploymentService', () => {
     state: DeploymentState.SCHEDULED,
     createdAt: new Date(),
     updatedAt: new Date(),
-    device: mockDevice
+    device: mockDevice,
+    imageVersion: mockImageVersion,
   };
 
   const mockDeploymentRepository = {
@@ -98,7 +100,7 @@ describe('DeploymentService', () => {
   describe('create', () => {
     const createDeploymentDto: CreateDeploymentDto = {
       deviceUuid: 'deviceUuid',
-      // imageVersionUuid: 'versionUuid'
+      imageVersionUuid: 'versionUuid'
     };
 
     it('should successfully create a deployment', async () => {
@@ -112,9 +114,13 @@ describe('DeploymentService', () => {
       expect(deviceRepository.findOne).toHaveBeenCalledWith({
         where: { uuid: createDeploymentDto.deviceUuid }
       });
+      expect(imageVersionRepository.findOne).toHaveBeenCalledWith({
+        where: { uuid: createDeploymentDto.imageVersionUuid }
+      });
       expect(deploymentRepository.save).toHaveBeenCalledWith(
         expect.objectContaining({
           device: mockDevice,
+          imageVersion: mockImageVersion,
           state: DeploymentState.SCHEDULED
         })
       );
@@ -128,6 +134,22 @@ describe('DeploymentService', () => {
       
       expect(deviceRepository.findOne).toHaveBeenCalledWith({
         where: { uuid: createDeploymentDto.deviceUuid }
+      });
+      expect(deploymentRepository.save).not.toHaveBeenCalled();
+    });
+
+    it('should throw NotFoundException if image version is not found', async () => {
+      mockDeviceRepository.findOne.mockResolvedValue(mockDevice);
+      mockImageVersionRepository.findOne.mockResolvedValue(null);
+
+      await expect(service.create(createDeploymentDto))
+        .rejects.toThrow(NotFoundException);
+      
+      expect(deviceRepository.findOne).toHaveBeenCalledWith({
+        where: { uuid: createDeploymentDto.deviceUuid }
+      });
+      expect(imageVersionRepository.findOne).toHaveBeenCalledWith({
+        where: { uuid: createDeploymentDto.imageVersionUuid }
       });
       expect(deploymentRepository.save).not.toHaveBeenCalled();
     });

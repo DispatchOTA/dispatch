@@ -19,6 +19,7 @@ describe('DeviceController', () => {
     pollingTime: '30',
     createdAt: new Date(),
     updatedAt: new Date(),
+    deployments: [],
   };
 
   const mockDeviceService = {
