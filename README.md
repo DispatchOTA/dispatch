@@ -15,10 +15,10 @@ Very much in Alpha.
 - [x] CRUD devices
 - [x] CRUD images
 - [x] CRUD image versions
+- [x] (DDI) wire up basic API
 - [ ] Set up object storage
 - [ ] Add artifact model to image versions
 - [ ] Link artifacts to objects
-- [ ] (DDI) wire up basic API
 - [ ] (DDI) poll deployments
 - [ ] (DDI) send deployment base
 - [ ] (DDI) deployment feedback
