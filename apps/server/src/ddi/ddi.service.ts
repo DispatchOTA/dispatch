@@ -28,9 +28,9 @@ export class DdiService {
     return this.buildRootResponse(
       device.pollingTime,
       device.requestConfig,
-      device,
-      installedDeployment,
-      inFlightDeployment,
+      device.uuid,
+      installedDeployment?.uuid,
+      inFlightDeployment?.uuid,
     );
   }
 
@@ -141,9 +141,9 @@ export class DdiService {
   private buildRootResponse(
     pollingTime: string,
     requestConfig: boolean,
-    device: Device,
-    installedDeployment: Deployment | null,
-    inFlightDeployment: Deployment | null,
+    deviceId: string,
+    installedDeploymentId: string | undefined,
+    inFlightDeploymentId: string | undefined,
   ): RootDto {
     const root = new RootDto();
 
@@ -158,20 +158,20 @@ export class DdiService {
     const links = new LinksDto();
     if (requestConfig) {
       const link = new LinkDto();
-      link.href = this.buildConfigLink(device.uuid);
+      link.href = this.buildConfigLink(deviceId);
       links.configData = link;
     }
-    if (installedDeployment) {
+    if (installedDeploymentId) {
       const link = new LinkDto();
-      link.href = this.buildInstalledBaseLink(device.uuid, installedDeployment.uuid);
+      link.href = this.buildInstalledBaseLink(deviceId, installedDeploymentId);
       links.installedBase = link;
     }
-    if (inFlightDeployment) {
+    if (inFlightDeploymentId) {
       const link = new LinkDto();
-      link.href = this.buildDeploymentBaseLink(device.uuid, inFlightDeployment.uuid);
+      link.href = this.buildDeploymentBaseLink(deviceId, inFlightDeploymentId);
       links.deploymentBase = link;
     }
-    if (requestConfig || installedDeployment || inFlightDeployment) {
+    if (requestConfig || installedDeploymentId || inFlightDeploymentId) {
       root._links = links;
     }
     return root;
