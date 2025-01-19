@@ -13,6 +13,11 @@ describe('DdiService', () => {
   let deviceRepository: Repository<Device>;
   let configService: ConfigService;
 
+  const mockWorkspaceId = 'workspace1';
+  const mockDeviceId = 'device1';
+  const mockDeploymentId = 'deployment1';
+  const mockImageVersionId = 'imageVersion1';
+  const mockFileName = 'file1';
   const mockOrigin = 'http://localhost:3000';
   const mockDevice: Device = {
     uuid: 'uuid',
@@ -38,12 +43,6 @@ describe('DdiService', () => {
   const mockConfigService = {
     get: jest.fn()
   };
-
-  const mockWorkspaceId = 'workspace1';
-  const mockDeviceId = 'device1';
-  const mockDeploymentId = 'deployment1';
-  const mockImageVersionId = 'imageVersion1';
-  const mockFileName = 'file1';
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
