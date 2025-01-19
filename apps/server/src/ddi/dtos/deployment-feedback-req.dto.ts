@@ -55,7 +55,7 @@ class StatusDto {
   details?: string[];
 }
 
-export class DeploymentBaseFeedbackReqDto {
+export class DeploymentBaseFeedbackDto {
   @IsOptional()
   @IsString()
   time?: string;

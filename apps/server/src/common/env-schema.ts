@@ -11,4 +11,5 @@ export const envValidationSchema = Joi.object({
     .valid(ENV_DEVELOPMENT, ENV_PRODUCTION, ENV_TEST, ENV_PROVISION)
     .default(ENV_DEVELOPMENT),
   PORT: Joi.number().port().default(3000),
+  ORIGIN: Joi.string().uri().default('http://localhost:3000'),
 });

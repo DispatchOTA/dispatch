@@ -13,7 +13,7 @@ enum ErrorCode {
   TooManyRequests = '429',
 }
 
-export class ErrorResDto {
+export class ErrorDto {
   @IsString()
   exceptionClass: string;
 

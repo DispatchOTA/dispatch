@@ -5,7 +5,7 @@ enum ConfirmationEnum {
   DENIED = 'denied'
 }
 
-export class ConfirmationFeedbackReqDto {
+export class ConfirmationFeedbackDto {
   @IsEnum(ConfirmationEnum)
   confirmation: ConfirmationEnum;
 
