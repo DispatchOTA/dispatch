@@ -3,6 +3,7 @@ import { DdiController } from './ddi.controller';
 import { DdiService } from './ddi.service';
 import { NotImplementedException } from '@nestjs/common';
 import { WorkspaceDeviceParams, WorkspaceDeviceDeploymentParams, WorkspaceDeviceImageVersionParams, WorkspaceDeviceImageVersionFilenameParams } from './dtos/path-params.dto';
+import { ConfigDto, LinkDto, LinksDto, PollingConfigDto, RootDto } from './dtos/root-res.dto';
 
 describe('DdiController', () => {
   let controller: DdiController;
@@ -13,6 +14,14 @@ describe('DdiController', () => {
   const mockDeploymentId = 'deployment1';
   const mockImageVersionId = 'imageVersion1';
   const mockFileName = 'file1';
+
+  const mockRootResponse: RootDto = {
+    config: {
+      polling: {
+        sleep: '00:10:00'
+      }
+    }
+  };
 
   const mockDdiService = {
     getRoot: jest.fn(),
@@ -45,16 +54,20 @@ describe('DdiController', () => {
   });
 
   describe('GET /', () => {
-    it('should call service.getRoot with correct params', async () => {
+    it('should call service.getRoot with correct params and return root response', async () => {
       const params: WorkspaceDeviceParams = {
         workspaceId: mockWorkspaceId,
         deviceId: mockDeviceId,
       };
 
-      mockDdiService.getRoot.mockResolvedValue({ hello: 'world' });
+      mockDdiService.getRoot.mockResolvedValue(mockRootResponse);
 
       const result = await controller.getRoot(params);
-      expect(result).toEqual({ hello: 'world' });
+      
+      expect(result).toBeDefined();
+      expect(result.config).toBeDefined();
+      expect(result.config.polling.sleep).toBe('00:10:00');
+      expect(result._links).toBeUndefined();
       expect(service.getRoot).toHaveBeenCalledWith(mockWorkspaceId, mockDeviceId);
     });
   });

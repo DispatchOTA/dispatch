@@ -34,7 +34,7 @@ export class LinksDto {
   configData?: LinkDto;
 }
 
-export class PollingResDto {
+export class RootDto {
   @ValidateNested()
   @Type(() => ConfigDto)
   config: ConfigDto;

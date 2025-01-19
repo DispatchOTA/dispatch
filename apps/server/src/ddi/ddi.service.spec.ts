@@ -3,16 +3,34 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { DdiService } from './ddi.service';
 import { Deployment } from '../deployment/entities/deployment.entity';
-import { Logger, NotImplementedException } from '@nestjs/common';
+import { Device } from '../device/entities/device.entity';
+import { Logger, NotFoundException } from '@nestjs/common';
+import { ConfigDto, LinkDto, LinksDto, PollingConfigDto, RootDto } from './dtos/root-res.dto';
 
 describe('DdiService', () => {
   let service: DdiService;
-  let repository: Repository<Deployment>;
+  let deploymentRepository: Repository<Deployment>;
+  let deviceRepository: Repository<Device>;
+
+  const mockDevice: Device = {
+    uuid: 'uuid',
+    id: 'device1',
+    description: 'test device',
+    state: 'active',
+    pollingTime: '30',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    deployments: [],
+  };
 
   const mockDeploymentRepository = {
     findOne: jest.fn(),
     find: jest.fn(),
     save: jest.fn(),
+  };
+
+  const mockDeviceRepository = {
+    findOne: jest.fn(),
   };
 
   const mockWorkspaceId = 'workspace1';
@@ -29,11 +47,25 @@ describe('DdiService', () => {
           provide: getRepositoryToken(Deployment),
           useValue: mockDeploymentRepository,
         },
+        {
+          provide: getRepositoryToken(Device),
+          useValue: mockDeviceRepository,
+        },
+        {
+          provide: Logger,
+          useValue: {
+            log: jest.fn(),
+            error: jest.fn(),
+            warn: jest.fn(),
+            debug: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
     service = module.get<DdiService>(DdiService);
-    repository = module.get<Repository<Deployment>>(getRepositoryToken(Deployment));
+    deploymentRepository = module.get<Repository<Deployment>>(getRepositoryToken(Deployment));
+    deviceRepository = module.get<Repository<Device>>(getRepositoryToken(Device));
     jest.clearAllMocks();
   });
 
@@ -42,9 +74,36 @@ describe('DdiService', () => {
   });
 
   describe('getRoot', () => {
-    it('should return hello world object', async () => {
+    it('should return root response with config when device exists', async () => {
+      mockDeviceRepository.findOne.mockResolvedValue(mockDevice);
+
       const result = await service.getRoot(mockWorkspaceId, mockDeviceId);
-      expect(result).toEqual({ hello: 'world' });
+      
+      expect(result).toBeDefined();
+      expect(result.config).toBeDefined();
+      expect(result.config.polling.sleep).toBe('00:10:00');
+      expect(deviceRepository.findOne).toHaveBeenCalledWith({
+        where: { id: mockDeviceId }
+      });
+    });
+
+    it('should throw NotFoundException when device does not exist', async () => {
+      mockDeviceRepository.findOne.mockResolvedValue(null);
+
+      await expect(service.getRoot(mockWorkspaceId, mockDeviceId))
+        .rejects.toThrow(NotFoundException);
+      
+      expect(deviceRepository.findOne).toHaveBeenCalledWith({
+        where: { id: mockDeviceId }
+      });
+    });
+
+    it('should not include _links when no optional data is present', async () => {
+      mockDeviceRepository.findOne.mockResolvedValue(mockDevice);
+
+      const result = await service.getRoot(mockWorkspaceId, mockDeviceId);
+      
+      expect(result._links).toBeUndefined();
     });
   });
 
