@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import { Deployment } from '../../deployment/entities/deployment.entity';
 import {
   Entity,
@@ -31,6 +32,10 @@ export class Device {
 
   @Column()
   pollingTime: string;
+
+  @Exclude()
+  @Column()
+  requestConfig: boolean;
 
   @CreateDateColumn()
   createdAt: Date;

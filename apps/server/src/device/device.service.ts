@@ -22,6 +22,7 @@ export class DeviceService {
     device.description = createDeviceDto.description;
     device.pollingTime = DEFAULT_POLLING_TIME;
     device.state = DeviceState.UNKNOWN;
+    device.requestConfig = false;
     this.logger.log(`Creating device: ${device.uuid}`);
     return this.deviceRepository.save(device);
   }

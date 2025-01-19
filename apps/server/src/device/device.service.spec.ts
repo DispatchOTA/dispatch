@@ -18,6 +18,7 @@ describe('DeviceService', () => {
     description: 'A test device',
     state: DeviceState.UNKNOWN,
     pollingTime: '30',
+    requestConfig: false,
     createdAt: new Date(),
     updatedAt: new Date(),
     deployments: [],

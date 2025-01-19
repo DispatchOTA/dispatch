@@ -27,7 +27,7 @@ export class DdiService {
     const inFlightDeployment = null;
     return this.buildRootResponse(
       device.pollingTime,
-      false,
+      device.requestConfig,
       device,
       installedDeployment,
       inFlightDeployment,

@@ -25,6 +25,7 @@ describe('DdiService', () => {
     description: 'test device',
     state: DeviceState.UNKNOWN,
     pollingTime: '01:00:00',
+    requestConfig: false,
     createdAt: new Date(),
     updatedAt: new Date(),
     deployments: [],
