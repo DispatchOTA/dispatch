@@ -22,9 +22,9 @@ export class DdiService {
     workspaceId: string,
     deviceId: string,
   ): Promise<RootDto> {
-    const device = await this.getDevice(deviceId);
-    const installedDeployment = null;
-    const inFlightDeployment = null;
+    const device = await this.getDeviceOrThrow(deviceId);
+    const installedDeployment = await this.findInstalledDeployment(deviceId);
+    const inFlightDeployment = await this.findInFlightDeployment(deviceId);
     return this.buildRootResponse(
       device.pollingTime,
       device.requestConfig,
@@ -96,8 +96,9 @@ export class DdiService {
     }
   }
 
+  // private
 
-  private async getDevice(deviceId: string) {
+  async getDeviceOrThrow(deviceId: string) {
     const device = await this.deviceRepository.findOne({
       where: {
         uuid: deviceId,
@@ -107,6 +108,34 @@ export class DdiService {
       throw new NotFoundException('Device not found');
     }
     return device;
+  }
+
+  async findInFlightDeployment(deviceId: string): Promise<Deployment | null> {
+    return this.deploymentRepository.findOne({
+      where: {
+        device: {
+          uuid: deviceId,
+        },
+        state: DeploymentState.RUNNING,
+      },
+      order: {
+        createdAt: 'DESC',
+      },
+    });
+  }
+
+  async findInstalledDeployment(deviceId: string): Promise<Deployment | null> {
+    return this.deploymentRepository.findOne({
+      where: {
+        device: {
+          uuid: deviceId,
+        },
+        state: DeploymentState.FINISHED,
+      },
+      order: {
+        createdAt: 'DESC',
+      },
+    });
   }
 
   private buildRootResponse(
@@ -157,12 +186,12 @@ export class DdiService {
     return `${this.getOrigin()}/ddi/${workspaceId}/controller/v1/${deviceId}`;
   }
 
-  buildConfigLink(deviceId: string): string {
+  buildConfigLink(deviceId: string) {
     const baseUrl = this.buildBaseUrl(deviceId);
     return `${baseUrl}/configData`;
   }
 
-  buildInstalledBaseLink(deviceId: string, deploymentId: string): string {
+  buildInstalledBaseLink(deviceId: string, deploymentId: string) {
     const baseUrl = this.buildBaseUrl(deviceId);
     return `${baseUrl}/installedBase/${deploymentId}`;
   }
