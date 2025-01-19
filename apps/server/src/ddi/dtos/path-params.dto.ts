@@ -22,11 +22,7 @@ export class WorkspaceDeviceImageVersionParams extends WorkspaceDeviceParams {
   imageVersionId: string;
 }
 
-export class WorkspaceDeviceImageVersionFilenameParams extends WorkspaceDeviceParams{
-  @IsUUID()
-  @IsNotEmpty()
-  imageVersionId: string;
-
+export class WorkspaceDeviceImageVersionFilenameParams extends WorkspaceDeviceImageVersionParams {
   @IsString()
   @IsNotEmpty()
   fileName: string;
