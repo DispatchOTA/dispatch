@@ -20,6 +20,7 @@ export class DeploymentService {
     private readonly imageVersionRepository: Repository<ImageVersion>,
   ) {}
 
+  // cancel in-flight deployments
   async create(createDeploymentDto: CreateDeploymentDto): Promise<Deployment> {
     const device = await this.deviceRepository.findOne({
       where: { uuid: createDeploymentDto.deviceUuid }
