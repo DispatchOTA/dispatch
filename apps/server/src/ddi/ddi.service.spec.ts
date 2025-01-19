@@ -4,8 +4,7 @@ import { Repository } from 'typeorm';
 import { DdiService } from './ddi.service';
 import { Deployment } from '../deployment/entities/deployment.entity';
 import { Device } from '../device/entities/device.entity';
-import { Logger, NotFoundException } from '@nestjs/common';
-import { ConfigDto, LinkDto, LinksDto, PollingConfigDto, RootDto } from './dtos/root-res.dto';
+import { NotFoundException } from '@nestjs/common';
 
 describe('DdiService', () => {
   let service: DdiService;
@@ -50,15 +49,6 @@ describe('DdiService', () => {
         {
           provide: getRepositoryToken(Device),
           useValue: mockDeviceRepository,
-        },
-        {
-          provide: Logger,
-          useValue: {
-            log: jest.fn(),
-            error: jest.fn(),
-            warn: jest.fn(),
-            debug: jest.fn(),
-          },
         },
       ],
     }).compile();
