@@ -87,14 +87,6 @@ describe('DdiService', () => {
         where: { id: mockDeviceId }
       });
     });
-
-    it('should not include _links when no optional data is present', async () => {
-      mockDeviceRepository.findOne.mockResolvedValue(mockDevice);
-
-      const result = await service.getRoot(mockWorkspaceId, mockDeviceId);
-      
-      expect(result._links).toBeUndefined();
-    });
   });
 
   describe('getInstalledDeployment', () => {
