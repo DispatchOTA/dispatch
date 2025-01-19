@@ -106,21 +106,6 @@ export class DdiService {
     return device;
   }
 
-  private async findInFlightDeployment(deviceId: string) {
-    const deployment = await this.deploymentRepository.findOne({
-      where: {
-        device: {
-          id: deviceId,
-        },
-        state: DeploymentState.RUNNING,
-      },
-      order: {
-        createdAt: 'DESC',
-      },
-    });
-    return deployment;
-  }
-
   private buildRootResponse(
     pollingTime: string,
     requestConfig: boolean,
