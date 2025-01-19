@@ -7,6 +7,7 @@ import { DeviceModule } from './device/device.module';
 import { ImageVersionModule } from './image-version/image-version.module';
 import { DeploymentModule } from './deployment/deployment.module';
 import { DdiModule } from './ddi/ddi.module';
+import { ImageModule } from './image/image.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { DdiModule } from './ddi/ddi.module';
       }),
     }),
     DeviceModule,
+    ImageModule,
     ImageVersionModule,
     DeploymentModule,
     DdiModule,

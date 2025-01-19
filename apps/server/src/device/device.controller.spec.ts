@@ -3,7 +3,7 @@ import { DeviceController } from './device.controller';
 import { DeviceService } from './device.service';
 import { CreateDeviceDto } from './dtos/create-device.dto';
 import { UpdateDeviceDto } from './dtos/update-device.dto';
-import { Device } from './entities/device.entity';
+import { Device, DeviceState } from './entities/device.entity';
 import { MessageDto } from '../common/dtos/message.dto';
 import { NotFoundException } from '@nestjs/common';
 import { Deployment, DeploymentState } from '../deployment/entities/deployment.entity';
@@ -17,7 +17,7 @@ describe('DeviceController', () => {
     uuid: 'uuid',
     id: 'id',
     description: 'A test device',
-    state: 'active',
+    state: DeviceState.UNKNOWN,
     pollingTime: '30',
     createdAt: new Date(),
     updatedAt: new Date(),

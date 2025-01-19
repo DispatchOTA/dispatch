@@ -5,7 +5,7 @@ import { DeploymentService } from './deployment.service';
 import { Deployment, DeploymentState } from './entities/deployment.entity';
 import { CreateDeploymentDto } from './dtos/create-deployment.dto';
 import { NotFoundException } from '@nestjs/common';
-import { Device } from '../device/entities/device.entity';
+import { Device, DeviceState } from '../device/entities/device.entity';
 import { ImageVersion } from '../image-version/entities/image-version.entity';
 
 describe('DeploymentService', () => {
@@ -18,7 +18,7 @@ describe('DeploymentService', () => {
     uuid: 'deviceUuid',
     id: 'deviceId',
     description: 'test device',
-    state: 'active',
+    state: DeviceState.UNKNOWN,
     pollingTime: '60',
     createdAt: new Date(),
     updatedAt: new Date(),
