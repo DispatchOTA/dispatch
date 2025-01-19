@@ -11,18 +11,18 @@ import {
 } from 'typeorm';
 
 export enum DeploymentState {
-  FINISHED, // finished successfully
-  ERROR, // failed
-  WARNING, // still runing with warnings
-  RUNNING, // still running
-  CANCELED, // cancelled
-  CANCELING, // in cancelling state and waiting for cancel confirmation
-  RETRIEVED, // send to device
-  DOWNLOAD, // device has started downloading
-  SCHEDULED, // scheduled in a rollout but not active
-  CANCEL_REJECTED, // cancelletaion rejected by device
-  DOWNLOADED, // image has been downloaded and waiting to update
-  WAIT_FOR_CONFIRMATION // deployment waiting to be confirmed
+  FINISHED = 'finished', // finished successfully
+  ERROR = 'error', // failed
+  WARNING = 'warning', // still runing with warnings
+  RUNNING = 'running', // still running
+  CANCELED = 'canceled', // cancelled
+  CANCELING = 'canceling', // in cancelling state and waiting for cancel confirmation
+  RETRIEVED = 'retrieved', // send to device
+  DOWNLOAD = 'download', // device has started downloading
+  SCHEDULED = 'scheduled', // scheduled in a rollout but not active
+  CANCEL_REJECTED = 'cancel_rejected', // cancelletaion rejected by device
+  DOWNLOADED = 'downloaded', // image has been downloaded and waiting to update
+  WAIT_FOR_CONFIRMATION = 'wait_for_confirmation', // deployment waiting to be confirmed
 }
 
 @Entity()

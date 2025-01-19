@@ -1,10 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Logger } from '@nestjs/common';
-import { Device } from './entities/device.entity';
+import { Device, DeviceState } from './entities/device.entity';
 import { Repository } from 'typeorm';
 import { UpdateDeviceDto } from './dtos/update-device.dto';
 import { CreateDeviceDto } from './dtos/create-device.dto';
+import { DEFAULT_POLLING_TIME } from '../common/consts';
 
 @Injectable()
 export class DeviceService {
@@ -19,6 +20,8 @@ export class DeviceService {
     const device = new Device();
     device.id = createDeviceDto.id;
     device.description = createDeviceDto.description;
+    device.pollingTime = DEFAULT_POLLING_TIME;
+    device.state = DeviceState.UNKNOWN;
     this.logger.log(`Creating device: ${device.uuid}`);
     return this.deviceRepository.save(device);
   }

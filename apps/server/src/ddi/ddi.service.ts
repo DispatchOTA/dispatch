@@ -1,6 +1,6 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Deployment } from '../deployment/entities/deployment.entity';
+import { Deployment, DeploymentState } from '../deployment/entities/deployment.entity';
 import { Repository } from 'typeorm';
 import { ConfigDto, LinkDto, LinksDto, PollingConfigDto, RootDto } from './dtos/root-res.dto';
 import { Device } from '../device/entities/device.entity';
@@ -24,7 +24,7 @@ export class DdiService {
     const installedDeployment = null;
     const inFlightDeployment = null;
     return this.buildRootResponse(
-      '00:10:00',
+      device.pollingTime,
       false,
       installedDeployment,
       inFlightDeployment,

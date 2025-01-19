@@ -8,6 +8,13 @@ import {
   OneToMany,
 } from 'typeorm';
 
+export enum DeviceState {
+  UNKNOWN = 'unknown',
+  IN_SYNC = 'in_sync',
+  PENDING = 'pending',
+  ERROR = 'error',
+}
+
 @Entity()
 export class Device {
   @PrimaryGeneratedColumn('uuid')
@@ -20,7 +27,7 @@ export class Device {
   description: string;
 
   @Column()
-  state: string;
+  state: DeviceState;
 
   @Column()
   pollingTime: string;

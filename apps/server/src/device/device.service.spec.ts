@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { DeviceService } from './device.service';
-import { Device } from './entities/device.entity';
+import { Device, DeviceState } from './entities/device.entity';
 import { CreateDeviceDto } from './dtos/create-device.dto';
 import { UpdateDeviceDto } from './dtos/update-device.dto';
 import { NotFoundException } from '@nestjs/common';
@@ -16,7 +16,7 @@ describe('DeviceService', () => {
     uuid: 'uuid',
     id: 'id',
     description: 'A test device',
-    state: 'active',
+    state: DeviceState.UNKNOWN,
     pollingTime: '30',
     createdAt: new Date(),
     updatedAt: new Date(),

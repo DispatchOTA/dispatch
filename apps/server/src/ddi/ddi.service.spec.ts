@@ -3,7 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { DdiService } from './ddi.service';
 import { Deployment } from '../deployment/entities/deployment.entity';
-import { Device } from '../device/entities/device.entity';
+import { Device, DeviceState } from '../device/entities/device.entity';
 import { NotFoundException } from '@nestjs/common';
 
 describe('DdiService', () => {
@@ -15,8 +15,8 @@ describe('DdiService', () => {
     uuid: 'uuid',
     id: 'device1',
     description: 'test device',
-    state: 'active',
-    pollingTime: '30',
+    state: DeviceState.UNKNOWN,
+    pollingTime: '01:00:00',
     createdAt: new Date(),
     updatedAt: new Date(),
     deployments: [],
@@ -71,7 +71,7 @@ describe('DdiService', () => {
       
       expect(result).toBeDefined();
       expect(result.config).toBeDefined();
-      expect(result.config.polling.sleep).toBe('00:10:00');
+      expect(result.config.polling.sleep).toBe('01:00:00');
       expect(deviceRepository.findOne).toHaveBeenCalledWith({
         where: { id: mockDeviceId }
       });

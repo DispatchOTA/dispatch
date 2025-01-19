@@ -9,3 +9,5 @@ export const MIN_ID_LEN = 1;
 export const MAX_ID_LEN = 500;
 export const MIN_DESC_LEN = 0;
 export const MAX_DESC_LEN = 5000;
+
+export const DEFAULT_POLLING_TIME = '01:00:00'; // 1 hour

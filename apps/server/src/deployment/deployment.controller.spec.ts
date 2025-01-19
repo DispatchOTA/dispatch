@@ -4,6 +4,7 @@ import { DeploymentService } from './deployment.service';
 import { CreateDeploymentDto } from './dtos/create-deployment.dto';
 import { Deployment, DeploymentState } from './entities/deployment.entity';
 import { NotFoundException } from '@nestjs/common';
+import { DeviceState } from '../device/entities/device.entity';
 
 describe('DeploymentController', () => {
   let controller: DeploymentController;
@@ -18,7 +19,7 @@ describe('DeploymentController', () => {
       uuid: 'deviceUuid',
       id: 'deviceId',
       description: 'test device',
-      state: 'active',
+      state: DeviceState.UNKNOWN,
       pollingTime: '60',
       createdAt: new Date(),
       updatedAt: new Date(),
