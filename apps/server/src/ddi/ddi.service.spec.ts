@@ -156,8 +156,6 @@ describe('DdiService', () => {
       });
     });
 
-    // put spec file here
-
     it('should throw NotFoundException when device does not exist', async () => {
       mockDeviceRepository.findOne.mockResolvedValue(null);
 
