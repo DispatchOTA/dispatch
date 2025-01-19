@@ -5,12 +5,15 @@ import { DdiService } from './ddi.service';
 import { Deployment } from '../deployment/entities/deployment.entity';
 import { Device, DeviceState } from '../device/entities/device.entity';
 import { NotFoundException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 
 describe('DdiService', () => {
   let service: DdiService;
   let deploymentRepository: Repository<Deployment>;
   let deviceRepository: Repository<Device>;
+  let configService: ConfigService;
 
+  const mockOrigin = 'http://localhost:3000';
   const mockDevice: Device = {
     uuid: 'uuid',
     id: 'device1',
@@ -32,6 +35,10 @@ describe('DdiService', () => {
     findOne: jest.fn(),
   };
 
+  const mockConfigService = {
+    get: jest.fn()
+  };
+
   const mockWorkspaceId = 'workspace1';
   const mockDeviceId = 'device1';
   const mockDeploymentId = 'deployment1';
@@ -50,12 +57,17 @@ describe('DdiService', () => {
           provide: getRepositoryToken(Device),
           useValue: mockDeviceRepository,
         },
+        {
+          provide: ConfigService,
+          useValue: mockConfigService,
+        },
       ],
     }).compile();
 
     service = module.get<DdiService>(DdiService);
     deploymentRepository = module.get<Repository<Deployment>>(getRepositoryToken(Deployment));
     deviceRepository = module.get<Repository<Device>>(getRepositoryToken(Device));
+    configService = module.get<ConfigService>(ConfigService);
     jest.clearAllMocks();
   });
 
@@ -73,7 +85,7 @@ describe('DdiService', () => {
       expect(result.config).toBeDefined();
       expect(result.config.polling.sleep).toBe('01:00:00');
       expect(deviceRepository.findOne).toHaveBeenCalledWith({
-        where: { id: mockDeviceId }
+        where: { uuid: mockDeviceId }
       });
     });
 
@@ -84,7 +96,7 @@ describe('DdiService', () => {
         .rejects.toThrow(NotFoundException);
       
       expect(deviceRepository.findOne).toHaveBeenCalledWith({
-        where: { id: mockDeviceId }
+        where: { uuid: mockDeviceId }
       });
     });
   });
@@ -128,6 +140,33 @@ describe('DdiService', () => {
     it('should return hello world object', async () => {
       const result = await service.downloadArtifactMD5(mockWorkspaceId, mockDeviceId, mockImageVersionId, mockFileName);
       expect(result).toEqual({ hello: 'world' });
+    });
+  });
+
+  describe('link building', () => {
+    beforeEach(() => {
+      mockConfigService.get.mockReturnValue(mockOrigin);
+    });
+
+    describe('buildConfigLink', () => {
+      it('should build correct config link', () => {
+        const link = service.buildConfigLink(mockDeviceId);
+        expect(link).toBe(`${mockOrigin}/ddi/${mockWorkspaceId}/controller/v1/${mockDeviceId}/configData`);
+      });
+    });
+
+    describe('buildInstalledBaseLink', () => {
+      it('should build correct installed base link', () => {
+        const link = service.buildInstalledBaseLink(mockDeviceId, mockDeploymentId);
+        expect(link).toBe(`${mockOrigin}/ddi/${mockWorkspaceId}/controller/v1/${mockDeviceId}/installedBase/${mockDeploymentId}`);
+      });
+    });
+
+    describe('buildDeploymentBaseLink', () => {
+      it('should build correct deployment base link', () => {
+        const link = service.buildDeploymentBaseLink(mockDeviceId, mockDeploymentId);
+        expect(link).toBe(`${mockOrigin}/ddi/${mockWorkspaceId}/controller/v1/${mockDeviceId}/deploymentBase/${mockDeploymentId}`);
+      });
     });
   });
 }); 

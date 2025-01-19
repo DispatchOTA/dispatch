@@ -4,6 +4,7 @@ import { Deployment, DeploymentState } from '../deployment/entities/deployment.e
 import { Repository } from 'typeorm';
 import { ConfigDto, LinkDto, LinksDto, PollingConfigDto, RootDto } from './dtos/root-res.dto';
 import { Device } from '../device/entities/device.entity';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class DdiService {
@@ -14,6 +15,7 @@ export class DdiService {
     private readonly deploymentRepository: Repository<Deployment>,
     @InjectRepository(Device)
     private readonly deviceRepository: Repository<Device>,
+    private readonly configService: ConfigService
   ) {}
 
   async getRoot(
@@ -26,6 +28,7 @@ export class DdiService {
     return this.buildRootResponse(
       device.pollingTime,
       false,
+      device,
       installedDeployment,
       inFlightDeployment,
     );
@@ -97,7 +100,7 @@ export class DdiService {
   private async getDevice(deviceId: string) {
     const device = await this.deviceRepository.findOne({
       where: {
-        id: deviceId,
+        uuid: deviceId,
       },
     });
     if (!device) {
@@ -109,6 +112,7 @@ export class DdiService {
   private buildRootResponse(
     pollingTime: string,
     requestConfig: boolean,
+    device: Device,
     installedDeployment: Deployment | null,
     inFlightDeployment: Deployment | null,
   ): RootDto {
@@ -125,23 +129,47 @@ export class DdiService {
     const links = new LinksDto();
     if (requestConfig) {
       const link = new LinkDto();
-      link.href = 'http://example.com/config';
+      link.href = this.buildConfigLink(device.uuid);
       links.configData = link;
     }
     if (installedDeployment) {
       const link = new LinkDto();
-      link.href = 'http://example.com/installedDeployment';
+      link.href = this.buildInstalledBaseLink(device.uuid, installedDeployment.uuid);
       links.installedBase = link;
     }
     if (inFlightDeployment) {
       const link = new LinkDto();
-      link.href = 'http://example.com/inFlightDeployment';
+      link.href = this.buildDeploymentBaseLink(device.uuid, inFlightDeployment.uuid);
       links.deploymentBase = link;
     }
     if (requestConfig || installedDeployment || inFlightDeployment) {
       root._links = links;
     }
     return root;
+  }
+
+  private getOrigin() {
+    return this.configService.get<string>('ORIGIN');
+  }
+
+  private buildBaseUrl(deviceId: string) {
+    const workspaceId = 'workspace1' // TODO: implement workspaceId
+    return `${this.getOrigin()}/ddi/${workspaceId}/controller/v1/${deviceId}`;
+  }
+
+  buildConfigLink(deviceId: string): string {
+    const baseUrl = this.buildBaseUrl(deviceId);
+    return `${baseUrl}/configData`;
+  }
+
+  buildInstalledBaseLink(deviceId: string, deploymentId: string): string {
+    const baseUrl = this.buildBaseUrl(deviceId);
+    return `${baseUrl}/installedBase/${deploymentId}`;
+  }
+
+  buildDeploymentBaseLink(deviceId: string, deploymentId: string) {
+    const baseUrl = this.buildBaseUrl(deviceId);
+    return `${baseUrl}/deploymentBase/${deploymentId}`;
   }
 }
 
