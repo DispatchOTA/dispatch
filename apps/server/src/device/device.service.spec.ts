@@ -2,27 +2,18 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { DeviceService } from './device.service';
-import { Device, DeviceState } from './entities/device.entity';
+import { Device } from './entities/device.entity';
 import { CreateDeviceDto } from './dtos/create-device.dto';
 import { UpdateDeviceDto } from './dtos/update-device.dto';
 import { NotFoundException } from '@nestjs/common';
 import { DeploymentState } from '../deployment/entities/deployment.entity';
+import { createMockDevice } from '../../test/factories';
 
 describe('DeviceService', () => {
   let service: DeviceService;
   let repository: Repository<Device>;
 
-  const mockDevice: Device = {
-    uuid: 'uuid',
-    id: 'id',
-    description: 'A test device',
-    state: DeviceState.UNKNOWN,
-    pollingTime: '30',
-    requestConfig: false,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    deployments: [],
-  };
+  const mockDevice = createMockDevice();
 
   const mockRepository = {
     create: jest.fn(),

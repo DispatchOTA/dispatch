@@ -3,62 +3,23 @@ import { DeviceController } from './device.controller';
 import { DeviceService } from './device.service';
 import { CreateDeviceDto } from './dtos/create-device.dto';
 import { UpdateDeviceDto } from './dtos/update-device.dto';
-import { Device, DeviceState } from './entities/device.entity';
-import { MessageDto } from '../common/dtos/message.dto';
 import { NotFoundException } from '@nestjs/common';
-import { Deployment, DeploymentState } from '../deployment/entities/deployment.entity';
-import { ImageVersion } from '../image-version/entities/image-version.entity';
+import { Deployment } from '../deployment/entities/deployment.entity';
+import { createMockDeployment, createMockDevice } from '../../test/factories';
 
 describe('DeviceController', () => {
   let controller: DeviceController;
   let service: DeviceService;
 
-  const mockDevice: Device = {
-    uuid: 'uuid',
-    id: 'id',
-    description: 'A test device',
-    state: DeviceState.UNKNOWN,
-    pollingTime: '30',
-    requestConfig: false,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    deployments: [],
-  };
-
-  const mockImageVersion: ImageVersion = {
-    uuid: 'uuid',
-    id: 'id',
-    description: 'A test image version',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    image: {
-      uuid: 'imageUuid',
-      id: 'imageId',
-      description: 'A test image',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      versions: [],
-    },
-    deployments: [],
-  };
+  const mockDevice = createMockDevice();
 
   const mockDeployments: Deployment[] = [
-    {
-      uuid: 'deployment-uuid-1',
-      state: DeploymentState.SCHEDULED,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+    createMockDeployment({
       device: mockDevice,
-      imageVersion: mockImageVersion,
-    },
-    {
-      uuid: 'deployment-uuid-2',
-      state: DeploymentState.SCHEDULED,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+    }),
+    createMockDeployment({
       device: mockDevice,
-      imageVersion: mockImageVersion,
-    },
+    }),
   ];
 
   const mockDeviceService = {
