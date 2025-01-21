@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import { DdiService } from './ddi.service';
 import { Deployment, DeploymentState } from '../deployment/entities/deployment.entity';
 import { Device } from '../device/entities/device.entity';
@@ -27,6 +27,7 @@ describe('DdiService', () => {
     findOne: jest.fn(),
     find: jest.fn(),
     save: jest.fn(),
+    update: jest.fn(),
   };
 
   const mockDeviceRepository = {
@@ -250,12 +251,6 @@ describe('DdiService', () => {
     });
 
     it('should throw NotFoundException when deployment is in wrong state', async () => {
-      const mockDeployment = createMockDeployment({
-        uuid: mockDeploymentId,
-        device: mockDevice,
-        state: DeploymentState.RUNNING // non-terminal state
-      });
-      
       mockDeploymentRepository.findOne.mockResolvedValue(null);
 
       await expect(
@@ -265,9 +260,70 @@ describe('DdiService', () => {
   });
 
   describe('getDeploymentBase', () => {
-    it('should return hello world object', async () => {
+    it('should return DDI DTO when deployment exists in RUNNING state', async () => {
+      const mockDeployment = createMockDeployment({
+        uuid: mockDeploymentId,
+        device: mockDevice,
+        state: DeploymentState.RUNNING
+      });
+
+      const mockDDiDto = { id: mockDeploymentId, someField: 'value' };
+      mockDeployment.toDDiDto = jest.fn().mockReturnValue(mockDDiDto);
+      
+      mockDeploymentRepository.findOne.mockResolvedValue(mockDeployment);
+
       const result = await service.getDeploymentBase(mockWorkspaceId, mockDeviceId, mockDeploymentId);
-      expect(result).toEqual({ hello: 'world' });
+      
+      expect(result).toEqual(mockDDiDto);
+      expect(mockDeployment.toDDiDto).toHaveBeenCalled();
+      expect(deploymentRepository.findOne).toHaveBeenCalledWith({
+        where: {
+          uuid: mockDeploymentId,
+          device: {
+            uuid: mockDeviceId,
+          },
+          state: Not(In([
+            DeploymentState.SCHEDULED,
+            DeploymentState.CANCELED, 
+            DeploymentState.CANCELING,
+            DeploymentState.WAIT_FOR_CONFIRMATION,
+          ])),
+        },
+      });
+      expect(deploymentRepository.update).toHaveBeenCalledWith(mockDeploymentId, {
+        state: DeploymentState.RETRIEVED
+      });
+    });
+
+    it('should throw NotFoundException when deployment does not exist', async () => {
+      mockDeploymentRepository.findOne.mockResolvedValue(null);
+
+      await expect(
+        service.getDeploymentBase(mockWorkspaceId, mockDeviceId, mockDeploymentId)
+      ).rejects.toThrow(new NotFoundException('Deployment not found'));
+      
+      expect(deploymentRepository.findOne).toHaveBeenCalledWith({
+        where: {
+          uuid: mockDeploymentId,
+          device: {
+            uuid: mockDeviceId,
+          },
+          state: Not(In([
+            DeploymentState.SCHEDULED,
+            DeploymentState.CANCELED, 
+            DeploymentState.CANCELING,
+            DeploymentState.WAIT_FOR_CONFIRMATION,
+          ])),
+        },
+      });
+    });
+
+    it('should throw NotFoundException when deployment is in wrong state', async () => {
+      mockDeploymentRepository.findOne.mockResolvedValue(null);
+
+      await expect(
+        service.getDeploymentBase(mockWorkspaceId, mockDeviceId, mockDeploymentId)
+      ).rejects.toThrow(new NotFoundException('Deployment not found'));
     });
   });
 

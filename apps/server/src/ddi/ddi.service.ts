@@ -1,7 +1,7 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Deployment, DeploymentState } from '../deployment/entities/deployment.entity';
-import { In, Repository } from 'typeorm';
+import { In, Not, Repository } from 'typeorm';
 import { ConfigDto, LinkDto, LinksDto, PollingConfigDto, RootDto } from './dtos/root-res.dto';
 import { Device } from '../device/entities/device.entity';
 import { ConfigService } from '@nestjs/config';
@@ -64,9 +64,28 @@ export class DdiService {
     deviceId: string,
     deploymentId: string,
   ) {
-    return {
-      hello: 'world',
+    const deployment = await this.deploymentRepository.findOne({
+      where: {
+        uuid: deploymentId,
+        device: {
+          uuid: deviceId,
+        },
+        state: Not(In([
+          // returns depoyments in a running and terminal states
+          DeploymentState.SCHEDULED,
+          DeploymentState.CANCELED, 
+          DeploymentState.CANCELING,
+          DeploymentState.WAIT_FOR_CONFIRMATION,
+        ])),
+      },
+    });
+    if (!deployment) {
+      throw new NotFoundException('Deployment not found');
     }
+    await this.deploymentRepository.update(deployment.uuid, {
+      state: DeploymentState.RETRIEVED,
+    });
+    return deployment.toDDiDto();
   }
 
   async postDeploymentFeedback(

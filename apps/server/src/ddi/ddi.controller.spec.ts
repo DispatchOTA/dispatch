@@ -131,18 +131,54 @@ describe('DdiController', () => {
   });
 
   describe('GET /deploymentBase/:deploymentId', () => {
-    it('should call service.getDeploymentBase with correct params', async () => {
-      const params: WorkspaceDeviceDeploymentParams = {
-        workspaceId: mockWorkspaceId,
-        deviceId: mockDeviceId,
-        deploymentId: mockDeploymentId,
-      };
+    const params: WorkspaceDeviceDeploymentParams = {
+      workspaceId: mockWorkspaceId,
+      deviceId: mockDeviceId,
+      deploymentId: mockDeploymentId,
+    };
 
-      mockDdiService.getDeploymentBase.mockResolvedValue({ hello: 'world' });
+    it('should return DDI DTO when deployment exists in running state', async () => {
+      const mockDDiDto = { id: mockDeploymentId, someField: 'value' };
+      mockDdiService.getDeploymentBase.mockResolvedValue(mockDDiDto);
 
       const result = await controller.getDeploymentBase(params);
-      expect(result).toEqual({ hello: 'world' });
-      expect(service.getDeploymentBase).toHaveBeenCalledWith(mockWorkspaceId, mockDeviceId, mockDeploymentId);
+      
+      expect(result).toEqual(mockDDiDto);
+      expect(service.getDeploymentBase).toHaveBeenCalledWith(
+        mockWorkspaceId,
+        mockDeviceId,
+        mockDeploymentId
+      );
+    });
+
+    it('should throw NotFoundException when deployment is in scheduled state', async () => {
+      mockDdiService.getDeploymentBase.mockRejectedValue(
+        new NotFoundException('Deployment not found')
+      );
+
+      await expect(controller.getDeploymentBase(params))
+        .rejects.toThrow(NotFoundException);
+      
+      expect(service.getDeploymentBase).toHaveBeenCalledWith(
+        mockWorkspaceId,
+        mockDeviceId,
+        mockDeploymentId
+      );
+    });
+
+    it('should throw NotFoundException when deployment does not exist', async () => {
+      mockDdiService.getDeploymentBase.mockRejectedValue(
+        new NotFoundException('Deployment not found')
+      );
+
+      await expect(controller.getDeploymentBase(params))
+        .rejects.toThrow(NotFoundException);
+      
+      expect(service.getDeploymentBase).toHaveBeenCalledWith(
+        mockWorkspaceId,
+        mockDeviceId,
+        mockDeploymentId
+      );
     });
   });
 
