@@ -6,16 +6,7 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ArtifactDto } from './artifacts.res.dto';
-
-export enum StatusEnum {
-  CANCELED = 'canceled',
-  WARNING = 'warning',
-  ERROR = 'error',
-  FINISHED = 'finished',
-  DOWNLOAD = 'download',
-  DOWNLOADED = 'downloaded',
-  RUNNING = 'running',
-}
+import { DeploymentState } from '../../deployment/entities/deployment.entity';
 
 export enum DownloadUpdateEnum {
   SKIP = 'skip',
@@ -74,8 +65,21 @@ export class DeploymentDto {
 }
 
 export class ActionHistoryDto {
-  @IsEnum(StatusEnum)
-  status: StatusEnum;
+  @IsEnum({
+    FINISHED: 'finished',
+    ERROR: 'error',
+    WARNING: 'warning',
+    RUNNING: 'running',
+    CANCELED: 'canceled',
+    CANCELING: 'canceling',
+    RETRIEVED: 'retrieved',
+    DOWNLOAD: 'download',
+    SCHEDULED: 'scheduled',
+    CANCEL_REJECTED: 'cancel_rejected',
+    DOWNLOADED: 'downloaded',
+    WAIT_FOR_CONFIRMATION: 'wait_for_confirmation',
+  })
+  status: DeploymentState;
 
   @IsArray()
   @IsString({ each: true })

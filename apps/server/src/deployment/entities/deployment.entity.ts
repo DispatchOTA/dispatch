@@ -6,9 +6,16 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
   CreateDateColumn,
-  OneToMany,
   ManyToOne,
 } from 'typeorm';
+import { 
+  ActionHistoryDto,
+  ChunkDto,
+  DeploymentDto,
+  DeploymentDDIDto,
+  DownloadUpdateEnum,
+  MaintenanceWindowEnum,
+} from '../../ddi/dtos/deployment-res.dto';
 
 export enum DeploymentState {
   FINISHED = 'finished', // finished successfully
@@ -44,4 +51,47 @@ export class Deployment {
 
   @ManyToOne(() => ImageVersion, (imageVersion) => imageVersion.deployments)
   imageVersion: ImageVersion;
+  
+  getDownloadType(): DownloadUpdateEnum {
+    return DownloadUpdateEnum.ATTEMPT;
+  }
+
+  getUpdateType(): DownloadUpdateEnum {
+    return DownloadUpdateEnum.ATTEMPT;
+  }
+
+  getMaintenanceWindow(): MaintenanceWindowEnum | undefined {
+    return undefined;
+  }
+
+  toDDiDto(): DeploymentDDIDto {
+    const chunkDto = new ChunkDto();
+    chunkDto.part = ''; // TODO
+    chunkDto.version = ''; // TODO
+    chunkDto.name = ''; // TODO
+    chunkDto.artifacts = []; // TODO
+    chunkDto.metadata = [];
+
+    const deploymentDto = new DeploymentDto();
+    deploymentDto.chunks = [
+      chunkDto
+    ];
+    deploymentDto.download = this.getDownloadType()
+    deploymentDto.update = this.getUpdateType()
+    const maintenanceWindow = this.getMaintenanceWindow();
+    if (maintenanceWindow) {
+      deploymentDto.maintenanceWindow = maintenanceWindow;
+    }
+
+    const actionHistoryDto = new ActionHistoryDto();   
+    actionHistoryDto.status = this.state;
+    actionHistoryDto.messages = []; // TODO
+
+    const deploymentDDIDto = new DeploymentDDIDto();
+    deploymentDDIDto.id = this.uuid;
+    deploymentDDIDto.deployment = deploymentDto;
+    deploymentDDIDto.actionHistory = actionHistoryDto;
+     
+    return deploymentDDIDto;
+  }
 }
