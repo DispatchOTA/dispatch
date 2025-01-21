@@ -4,7 +4,7 @@ import { Type } from 'class-transformer';
 export enum FinishedEnum {
   SUCCESS = 'success',
   FAILURE = 'failure',
-  NONE = 'none',
+  // NONE = 'none',
 }
 
 export enum ExecutionEnum {

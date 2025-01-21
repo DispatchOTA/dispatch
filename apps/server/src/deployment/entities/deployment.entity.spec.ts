@@ -17,6 +17,32 @@ describe('Deployment', () => {
     deployment.updatedAt = new Date();
   });
 
+  describe('isInTerminalState', () => {
+    it.each([
+      DeploymentState.FINISHED,
+      DeploymentState.ERROR,
+      DeploymentState.DOWNLOADED,
+    ])('should return true when state is %s', (state) => {
+      deployment.state = state;
+      expect(deployment.isInTerminalState()).toBe(true);
+    });
+
+    it.each([
+      DeploymentState.RUNNING,
+      DeploymentState.SCHEDULED,
+      DeploymentState.CANCELING,
+      DeploymentState.CANCELED,
+      DeploymentState.WARNING,
+      DeploymentState.RETRIEVED,
+      DeploymentState.DOWNLOAD,
+      DeploymentState.CANCEL_REJECTED,
+      DeploymentState.WAIT_FOR_CONFIRMATION,
+    ])('should return false when state is %s', (state) => {
+      deployment.state = state;
+      expect(deployment.isInTerminalState()).toBe(false);
+    });
+  });
+
   describe('getDownloadType', () => {
     it('should return ATTEMPT', () => {
       expect(deployment.getDownloadType()).toBe(DownloadUpdateEnum.ATTEMPT);
