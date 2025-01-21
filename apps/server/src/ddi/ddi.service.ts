@@ -71,7 +71,7 @@ export class DdiService {
           uuid: deviceId,
         },
         state: Not(In([
-          // returns depoyments in a running and terminal states
+          // returns deployments in a running and terminal states
           DeploymentState.SCHEDULED,
           DeploymentState.CANCELED, 
           DeploymentState.CANCELING,
