@@ -44,5 +44,9 @@ export const createMockDeployment = (overrides?: Partial<Deployment>): Deploymen
   updatedAt: new Date('2024-01-01'),
   device: createMockDevice(),
   imageVersion: createMockImageVersion(),
+  getDownloadType: jest.fn(),
+  getUpdateType: jest.fn(),
+  getMaintenanceWindow: jest.fn(),
+  toDDiDto: jest.fn(),
   ...overrides
 });
