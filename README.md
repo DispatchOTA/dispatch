@@ -19,9 +19,11 @@ Very much in Alpha.
 - [ ] Set up object storage
 - [ ] Add artifact model to image versions
 - [ ] Link artifacts to objects
-- [ ] (DDI) poll deployments
+- [x] (DDI) poll deployments
 - [ ] (DDI) send deployment base
+- [x] (DDI) send installed base
 - [ ] (DDI) deployment feedback
+- [ ] (DDI) send artifacts
 - [ ] (DDI) send config data
 - [ ] Updating device state
 - [ ] Hardware types and compatibility

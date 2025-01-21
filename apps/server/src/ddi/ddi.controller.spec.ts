@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { DdiController } from './ddi.controller';
 import { DdiService } from './ddi.service';
-import { NotImplementedException } from '@nestjs/common';
+import { NotImplementedException, NotFoundException } from '@nestjs/common';
 import { WorkspaceDeviceParams, WorkspaceDeviceDeploymentParams, WorkspaceDeviceImageVersionParams, WorkspaceDeviceImageVersionFilenameParams } from './dtos/path-params.dto';
 import { ConfigDto, LinkDto, LinksDto, PollingConfigDto, RootDto } from './dtos/root-res.dto';
 
@@ -79,18 +79,54 @@ describe('DdiController', () => {
   });
 
   describe('GET /installedBase/:deploymentId', () => {
-    it('should call service.getInstalledDeployment with correct params', async () => {
-      const params: WorkspaceDeviceDeploymentParams = {
-        workspaceId: mockWorkspaceId,
-        deviceId: mockDeviceId,
-        deploymentId: mockDeploymentId,
-      };
+    const params: WorkspaceDeviceDeploymentParams = {
+      workspaceId: mockWorkspaceId,
+      deviceId: mockDeviceId,
+      deploymentId: mockDeploymentId,
+    };
 
-      mockDdiService.getInstalledDeployment.mockResolvedValue({ hello: 'world' });
+    it('should return DDI DTO when deployment exists in terminal state', async () => {
+      const mockDDiDto = { id: mockDeploymentId, someField: 'value' };
+      mockDdiService.getInstalledDeployment.mockResolvedValue(mockDDiDto);
 
       const result = await controller.getInstalledDeployment(params);
-      expect(result).toEqual({ hello: 'world' });
-      expect(service.getInstalledDeployment).toHaveBeenCalledWith(mockWorkspaceId, mockDeviceId, mockDeploymentId);
+      
+      expect(result).toEqual(mockDDiDto);
+      expect(service.getInstalledDeployment).toHaveBeenCalledWith(
+        mockWorkspaceId,
+        mockDeviceId,
+        mockDeploymentId
+      );
+    });
+
+    it('should throw NotFoundException when deployment is in running state', async () => {
+      mockDdiService.getInstalledDeployment.mockRejectedValue(
+        new NotFoundException('Installed deployment not found')
+      );
+
+      await expect(controller.getInstalledDeployment(params))
+        .rejects.toThrow(NotFoundException);
+      
+      expect(service.getInstalledDeployment).toHaveBeenCalledWith(
+        mockWorkspaceId,
+        mockDeviceId,
+        mockDeploymentId
+      );
+    });
+
+    it('should throw NotFoundException when deployment does not exist', async () => {
+      mockDdiService.getInstalledDeployment.mockRejectedValue(
+        new NotFoundException('Installed deployment not found')
+      );
+
+      await expect(controller.getInstalledDeployment(params))
+        .rejects.toThrow(NotFoundException);
+      
+      expect(service.getInstalledDeployment).toHaveBeenCalledWith(
+        mockWorkspaceId,
+        mockDeviceId,
+        mockDeploymentId
+      );
     });
   });
 

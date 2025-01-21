@@ -7,6 +7,7 @@ import { Device } from '../device/entities/device.entity';
 import { NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { createMockDeployment, createMockDevice } from '../../test/factories';
+import { In } from 'typeorm';
 
 describe('DdiService', () => {
   let service: DdiService;
@@ -159,9 +160,107 @@ describe('DdiService', () => {
   });
 
   describe('getInstalledDeployment', () => {
-    it('should return hello world object', async () => {
+    it('should return DDI DTO when deployment exists in FINISHED state', async () => {
+      const mockDeployment = createMockDeployment({
+        uuid: mockDeploymentId,
+        device: mockDevice,
+        state: DeploymentState.FINISHED
+      });
+
+      const mockDDiDto = { id: mockDeploymentId, someField: 'value' };
+      mockDeployment.toDDiDto = jest.fn().mockReturnValue(mockDDiDto);
+      
+      mockDeploymentRepository.findOne.mockResolvedValue(mockDeployment);
+
       const result = await service.getInstalledDeployment(mockWorkspaceId, mockDeviceId, mockDeploymentId);
-      expect(result).toEqual({ hello: 'world' });
+      
+      expect(result).toEqual(mockDDiDto);
+      expect(mockDeployment.toDDiDto).toHaveBeenCalled();
+      expect(deploymentRepository.findOne).toHaveBeenCalledWith({
+        where: {
+          uuid: mockDeploymentId,
+          device: {
+            uuid: mockDeviceId,
+          },
+          state: In([
+            DeploymentState.FINISHED,
+            DeploymentState.ERROR,
+            DeploymentState.DOWNLOADED,
+          ]),
+        },
+      });
+    });
+
+    it('should return DDI DTO when deployment exists in ERROR state', async () => {
+      const mockDeployment = createMockDeployment({
+        uuid: mockDeploymentId,
+        device: mockDevice,
+        state: DeploymentState.ERROR
+      });
+
+      const mockDDiDto = { id: mockDeploymentId, someField: 'value' };
+      mockDeployment.toDDiDto = jest.fn().mockReturnValue(mockDDiDto);
+      
+      mockDeploymentRepository.findOne.mockResolvedValue(mockDeployment);
+
+      const result = await service.getInstalledDeployment(mockWorkspaceId, mockDeviceId, mockDeploymentId);
+      
+      expect(result).toEqual(mockDDiDto);
+      expect(mockDeployment.toDDiDto).toHaveBeenCalled();
+    });
+
+    it('should return DDI DTO when deployment exists in DOWNLOADED state', async () => {
+      const mockDeployment = createMockDeployment({
+        uuid: mockDeploymentId,
+        device: mockDevice,
+        state: DeploymentState.DOWNLOADED
+      });
+
+      const mockDDiDto = { id: mockDeploymentId, someField: 'value' };
+      mockDeployment.toDDiDto = jest.fn().mockReturnValue(mockDDiDto);
+      
+      mockDeploymentRepository.findOne.mockResolvedValue(mockDeployment);
+
+      const result = await service.getInstalledDeployment(mockWorkspaceId, mockDeviceId, mockDeploymentId);
+      
+      expect(result).toEqual(mockDDiDto);
+      expect(mockDeployment.toDDiDto).toHaveBeenCalled();
+    });
+
+    it('should throw NotFoundException when deployment does not exist', async () => {
+      mockDeploymentRepository.findOne.mockResolvedValue(null);
+
+      await expect(
+        service.getInstalledDeployment(mockWorkspaceId, mockDeviceId, mockDeploymentId)
+      ).rejects.toThrow(new NotFoundException('Installed deployment not found'));
+      
+      expect(deploymentRepository.findOne).toHaveBeenCalledWith({
+        where: {
+          uuid: mockDeploymentId,
+          device: {
+            uuid: mockDeviceId,
+          },
+          state: In([
+            DeploymentState.FINISHED,
+            DeploymentState.ERROR,
+            DeploymentState.DOWNLOADED,
+          ]),
+        },
+      });
+    });
+
+    it('should throw NotFoundException when deployment is in wrong state', async () => {
+      const mockDeployment = createMockDeployment({
+        uuid: mockDeploymentId,
+        device: mockDevice,
+        state: DeploymentState.RUNNING // non-terminal state
+      });
+      
+      mockDeploymentRepository.findOne.mockResolvedValue(null);
+
+      await expect(
+        service.getInstalledDeployment(mockWorkspaceId, mockDeviceId, mockDeploymentId)
+      ).rejects.toThrow(new NotFoundException('Installed deployment not found'));
     });
   });
 
