@@ -3,30 +3,14 @@ import { ImageVersionController } from './image-version.controller';
 import { ImageVersionService } from './image-version.service';
 import { CreateImageVersionDto } from './dtos/create-image-version.dto';
 import { UpdateImageVersionDto } from './dtos/update-image-version.dto';
-import { ImageVersion } from './entities/image-version.entity';
-import { MessageDto } from '../common/dtos/message.dto';
 import { NotFoundException } from '@nestjs/common';
+import { createMockImageVersion } from '../../test/factories';
 
 describe('ImageVersionController', () => {
   let controller: ImageVersionController;
   let service: ImageVersionService;
 
-  const mockImageVersion: ImageVersion = {
-    uuid: 'uuid',
-    id: 'id',
-    description: 'A test image version',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    image: {
-      uuid: 'imageUuid',
-      id: 'imageId',
-      description: 'A test image',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      versions: [],
-    },
-    deployments: [],
-  };
+  const mockImageVersion = createMockImageVersion();
 
   const mockImageVersionService = {
     create: jest.fn(),

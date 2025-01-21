@@ -5,8 +5,9 @@ import { DeploymentService } from './deployment.service';
 import { Deployment, DeploymentState } from './entities/deployment.entity';
 import { CreateDeploymentDto } from './dtos/create-deployment.dto';
 import { NotFoundException } from '@nestjs/common';
-import { Device, DeviceState } from '../device/entities/device.entity';
+import { Device } from '../device/entities/device.entity';
 import { ImageVersion } from '../image-version/entities/image-version.entity';
+import { createMockDevice, createMockImageVersion, createMockDeployment } from '../../test/factories';
 
 describe('DeploymentService', () => {
   let service: DeploymentService;
@@ -14,43 +15,14 @@ describe('DeploymentService', () => {
   let deviceRepository: Repository<Device>;
   let imageVersionRepository: Repository<ImageVersion>;
 
-  const mockDevice: Device = {
-    uuid: 'deviceUuid',
-    id: 'deviceId',
-    description: 'test device',
-    state: DeviceState.UNKNOWN,
-    pollingTime: '60',
-    requestConfig: false,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    deployments: [],
-  };
+  const mockDevice = createMockDevice();
 
-  const mockImageVersion: ImageVersion = {
-    uuid: 'versionUuid',
-    id: 'versionId',
-    description: 'test version',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    image: {
-      uuid: 'imageUuid',
-      id: 'imageId',
-      description: 'test image',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      versions: []
-    },
-    deployments: [],
-  };
+  const mockImageVersion = createMockImageVersion();
 
-  const mockDeployment: Deployment = {
-    uuid: 'uuid',
-    state: DeploymentState.SCHEDULED,
-    createdAt: new Date(),
-    updatedAt: new Date(),
+  const mockDeployment = createMockDeployment({
     device: mockDevice,
     imageVersion: mockImageVersion,
-  };
+  });
 
   const mockDeploymentRepository = {
     create: jest.fn(),

@@ -2,48 +2,14 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { DeploymentController } from './deployment.controller';
 import { DeploymentService } from './deployment.service';
 import { CreateDeploymentDto } from './dtos/create-deployment.dto';
-import { Deployment, DeploymentState } from './entities/deployment.entity';
 import { NotFoundException } from '@nestjs/common';
-import { DeviceState } from '../device/entities/device.entity';
+import { createMockDeployment } from '../../test/factories';
 
 describe('DeploymentController', () => {
   let controller: DeploymentController;
   let service: DeploymentService;
 
-  const mockDeployment: Deployment = {
-    uuid: 'uuid',
-    state: DeploymentState.SCHEDULED,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    device: {
-      uuid: 'deviceUuid',
-      id: 'deviceId',
-      description: 'test device',
-      state: DeviceState.UNKNOWN,
-      pollingTime: '60',
-      requestConfig: false,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      deployments: []
-    },
-    imageVersion: {
-      uuid: 'versionUuid',
-      id: 'versionId',
-      description: 'test version',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      image: {
-        uuid: 'imageUuid',
-        id: 'imageId',
-        description: 'test image',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        versions: []
-      },
-      deployments: []
-    }
-  };
-
+  const mockDeployment = createMockDeployment();
   const mockDeploymentService = {
     create: jest.fn(),
     findAll: jest.fn()

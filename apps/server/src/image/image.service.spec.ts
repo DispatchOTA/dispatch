@@ -7,19 +7,13 @@ import { CreateImageDto } from './dtos/create-image.dto';
 import { UpdateImageDto } from './dtos/update-image.dto';
 import { NotFoundException } from '@nestjs/common';
 import { ImageVersion } from '../image-version/entities/image-version.entity';
+import { createMockImage } from '../../test/factories';
 
 describe('ImageService', () => {
   let service: ImageService;
   let repository: Repository<Image>;
 
-  const mockImage: Image = {
-    uuid: 'uuid',
-    id: 'id',
-    description: 'A test image',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    versions: []
-  };
+  const mockImage = createMockImage();
 
   const mockRepository = {
     create: jest.fn(),

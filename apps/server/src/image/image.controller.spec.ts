@@ -3,23 +3,15 @@ import { ImageController } from './image.controller';
 import { ImageService } from './image.service';
 import { CreateImageDto } from './dtos/create-image.dto';
 import { UpdateImageDto } from './dtos/update-image.dto';
-import { Image } from './entities/image.entity';
-import { MessageDto } from '../common/dtos/message.dto';
 import { NotFoundException } from '@nestjs/common';
+import { createMockImage } from '../../test/factories';
 
 describe('ImageController', () => {
   let controller: ImageController;
   let service: ImageService;
 
-  const mockImage: Image = {
-    uuid: 'uuid',
-    id: 'id',
-    description: 'A test image',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    versions: [],
-  };
-
+  const mockImage = createMockImage();
+  
   const mockImageService = {
     create: jest.fn(),
     findAll: jest.fn(),

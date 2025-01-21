@@ -3,10 +3,10 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { DdiService } from './ddi.service';
 import { Deployment, DeploymentState } from '../deployment/entities/deployment.entity';
-import { Device, DeviceState } from '../device/entities/device.entity';
+import { Device } from '../device/entities/device.entity';
 import { NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ImageVersion } from '../image-version/entities/image-version.entity';
+import { createMockDeployment, createMockDevice } from '../../test/factories';
 
 describe('DdiService', () => {
   let service: DdiService;
@@ -15,22 +15,12 @@ describe('DdiService', () => {
   let configService: ConfigService;
 
   const mockWorkspaceId = 'workspace1';
-  const mockDeviceId = 'device1';
+  const mockDeviceId = 'device-uuid-1';
   const mockDeploymentId = 'deployment1';
   const mockImageVersionId = 'imageVersion1';
   const mockFileName = 'file1';
   const mockOrigin = 'http://localhost:3000';
-  const mockDevice: Device = {
-    uuid: mockDeviceId,
-    id: 'device1',
-    description: 'test device',
-    state: DeviceState.UNKNOWN,
-    pollingTime: '01:00:00',
-    requestConfig: false,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    deployments: [],
-  };
+  const mockDevice = createMockDevice();
 
   const mockDeploymentRepository = {
     findOne: jest.fn(),
@@ -225,72 +215,38 @@ describe('DdiService', () => {
   });
 
   describe('deployments', () => {
-    const mockImageVersion: ImageVersion = {
-      uuid: 'imageVersion1',
-      id: 'image1',
-      description: 'test image',
-      image: {
-        uuid: 'image1',
-        id: 'image1',
-        description: 'test image',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        versions: [],
-      },
-      deployments: [],
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-
-    const mockDeployments: Deployment[] = [
-      {
-        uuid: 'deployment0', 
+    
+    const mockDeployments = [
+      createMockDeployment({
         state: DeploymentState.SCHEDULED,
         createdAt: new Date('2024-01-05'),
-        updatedAt: new Date('2024-01-05'),
         device: mockDevice,
-        imageVersion: mockImageVersion,
-      },
-      {
-        uuid: 'deployment1',
+      }),
+      createMockDeployment({
         state: DeploymentState.RUNNING,
         createdAt: new Date('2024-01-02'),
-        updatedAt: new Date('2024-01-02'),
         device: mockDevice,
-        imageVersion: mockImageVersion,
-      },
-      {
-        uuid: 'deployment2', 
+      }),
+      createMockDeployment({
         state: DeploymentState.RUNNING,
         createdAt: new Date('2024-01-01'),
-        updatedAt: new Date('2024-01-01'),
         device: mockDevice,
-        imageVersion: mockImageVersion,
-      },
-      {
-        uuid: 'deployment3', 
+      }),
+      createMockDeployment({
         state: DeploymentState.SCHEDULED,
         createdAt: new Date('2024-01-03'),
-        updatedAt: new Date('2024-01-03'),
         device: mockDevice,
-        imageVersion: mockImageVersion,
-      },
-      {
-        uuid: 'deployment4', 
+      }),
+      createMockDeployment({
         state: DeploymentState.FINISHED,
         createdAt: new Date('2024-01-04'),
-        updatedAt: new Date('2024-01-04'),
         device: mockDevice,
-        imageVersion: mockImageVersion,
-      },
-      {
-        uuid: 'deployment5', 
+      }),
+      createMockDeployment({
         state: DeploymentState.FINISHED,
         createdAt: new Date('2024-01-03'),
-        updatedAt: new Date('2024-01-03'),
         device: mockDevice,
-        imageVersion: mockImageVersion,
-      },
+      }),
     ];
 
     describe('findInstalledDeployment', () => {
