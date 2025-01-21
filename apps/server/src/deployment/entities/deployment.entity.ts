@@ -24,7 +24,7 @@ export enum DeploymentState {
   RUNNING = 'running', // still running
   CANCELED = 'canceled', // cancelled
   CANCELING = 'canceling', // in cancelling state and waiting for cancel confirmation
-  RETRIEVED = 'retrieved', // send to device
+  RETRIEVED = 'retrieved', // sent to device
   DOWNLOAD = 'download', // device has started downloading
   SCHEDULED = 'scheduled', // scheduled in a rollout but not active
   CANCEL_REJECTED = 'cancel_rejected', // cancelletaion rejected by device
