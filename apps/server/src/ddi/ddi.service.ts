@@ -1,10 +1,12 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { GoneException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Deployment, DeploymentState } from '../deployment/entities/deployment.entity';
 import { In, Not, Repository } from 'typeorm';
 import { ConfigDto, LinkDto, LinksDto, PollingConfigDto, RootDto } from './dtos/root-res.dto';
 import { Device } from '../device/entities/device.entity';
 import { ConfigService } from '@nestjs/config';
+import { ExecutionEnum, FinishedEnum } from './dtos/deployment-feedback-req.dto';
+import { DeploymentBaseFeedbackDto } from './dtos/deployment-feedback-req.dto';
 
 @Injectable()
 export class DdiService {
@@ -92,10 +94,22 @@ export class DdiService {
     workspaceId: string,
     deviceId: string,
     deploymentId: string,
+    deploymentBaseFeedback: DeploymentBaseFeedbackDto,
   ) {
-    return {
-      hello: 'world',
+    const device = await this.getDeviceOrThrow(deviceId);
+    const deployment = await this.getDeploymentOrThrow(deploymentId);
+
+    if(deployment.isInTerminalState()) {
+      throw new GoneException('Deployment is in a terminal state');
     }
+
+    const { state, messages } = this.handleDeploymentFeedback(deploymentBaseFeedback);
+
+    await this.deploymentRepository.update(deployment.uuid, {
+      state,
+    });
+
+    return;
   }
 
   async getArtifacts(
@@ -142,6 +156,18 @@ export class DdiService {
       throw new NotFoundException('Device not found');
     }
     return device;
+  }
+
+  async getDeploymentOrThrow(deploymentId: string) {
+    const deployment = await this.deploymentRepository.findOne({
+      where: {
+        uuid: deploymentId,
+      },
+    });
+    if (!deployment) {
+      throw new NotFoundException('Deployment not found');
+    }
+    return deployment;
   }
 
   async findInFlightDeployment(deviceId: string): Promise<Deployment | null> {
@@ -233,6 +259,60 @@ export class DdiService {
   buildDeploymentBaseLink(deviceId: string, deploymentId: string) {
     const baseUrl = this.buildBaseUrl(deviceId);
     return `${baseUrl}/deploymentBase/${deploymentId}`;
+  }
+
+
+  handleDeploymentFeedback(deploymentBaseFeedback: DeploymentBaseFeedbackDto): { state: DeploymentState; messages: string[]} {
+    let state: DeploymentState;
+    const messages: string[] = [];
+
+    const feedbackDetailMessages = deploymentBaseFeedback.status.details;
+    if (feedbackDetailMessages && feedbackDetailMessages.length > 0) {
+      messages.concat(feedbackDetailMessages);
+    }
+
+    switch (deploymentBaseFeedback.status.execution) {
+      case ExecutionEnum.CANCELED:
+        state = DeploymentState.CANCELED;
+        messages.push("Server update: Device confirmed cancelation.");
+      break;
+
+      case ExecutionEnum.REJECTED:
+        state = DeploymentState.WARNING;
+        messages.push("Server update: Device rejected update.");
+      break;
+
+      case ExecutionEnum.CLOSED:
+        const result = deploymentBaseFeedback.status.result.finished;
+        if (result === FinishedEnum.FAILURE) {
+          state = DeploymentState.ERROR;
+          messages.push("Server update: Device reported result with error.");
+        } else {
+          state = DeploymentState.FINISHED;
+          messages.push("Server update: Device reported result with success.");
+        }
+      break;
+
+      case ExecutionEnum.DOWNLOAD:
+        state = DeploymentState.DOWNLOAD;
+        messages.push("Server update: Device confirmed download start.");
+      break;
+
+      case ExecutionEnum.DOWNLOADED:
+        state = DeploymentState.DOWNLOADED;
+        messages.push("Server update: Device confirmed download finished.");
+      break;
+
+      default:
+        state = DeploymentState.RUNNING;
+        messages.push(`Server update: Device reported intermediate feedback ${deploymentBaseFeedback.status.execution}`);
+      break;
+    }
+
+    return {
+      state,
+      messages
+    };
   }
 }
 

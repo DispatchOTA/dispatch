@@ -4,6 +4,9 @@ import { DdiService } from './ddi.service';
 import { NotImplementedException, NotFoundException } from '@nestjs/common';
 import { WorkspaceDeviceParams, WorkspaceDeviceDeploymentParams, WorkspaceDeviceImageVersionParams, WorkspaceDeviceImageVersionFilenameParams } from './dtos/path-params.dto';
 import { ConfigDto, LinkDto, LinksDto, PollingConfigDto, RootDto } from './dtos/root-res.dto';
+import { FinishedEnum } from './dtos/deployment-feedback-req.dto';
+import { ExecutionEnum } from './dtos/deployment-feedback-req.dto';
+import { DeploymentBaseFeedbackDto } from './dtos/deployment-feedback-req.dto';
 
 describe('DdiController', () => {
   let controller: DdiController;
@@ -190,11 +193,27 @@ describe('DdiController', () => {
         deploymentId: mockDeploymentId,
       };
 
-      mockDdiService.postDeploymentFeedback.mockResolvedValue({ hello: 'world' });
+      const mockDeploymentBaseFeedback: DeploymentBaseFeedbackDto = {
+        status: {
+          execution: ExecutionEnum.CLOSED,
+          result: {
+            finished: FinishedEnum.SUCCESS,
+            progress: {
+              cnt: 10,
+              of: 100,
+            },
+          },
+          code: 0,
+          details: ['detail1', 'detail2'],
+        },
+        time: new Date().toISOString(),
+      };
 
-      const result = await controller.postDeploymentFeedback(params);
-      expect(result).toEqual({ hello: 'world' });
-      expect(service.postDeploymentFeedback).toHaveBeenCalledWith(mockWorkspaceId, mockDeviceId, mockDeploymentId);
+      mockDdiService.postDeploymentFeedback.mockResolvedValue(null);
+
+      const result = await controller.postDeploymentFeedback(params, mockDeploymentBaseFeedback);
+      expect(result).toBeNull();
+      expect(service.postDeploymentFeedback).toHaveBeenCalledWith(mockWorkspaceId, mockDeviceId, mockDeploymentId, mockDeploymentBaseFeedback);
     });
   });
 

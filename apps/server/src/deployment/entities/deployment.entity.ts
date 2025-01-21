@@ -51,6 +51,14 @@ export class Deployment {
 
   @ManyToOne(() => ImageVersion, (imageVersion) => imageVersion.deployments)
   imageVersion: ImageVersion;
+
+  isInTerminalState(): boolean {
+    return [
+      DeploymentState.FINISHED,
+      DeploymentState.ERROR,
+      DeploymentState.DOWNLOADED,
+    ].includes(this.state);
+  }
   
   getDownloadType(): DownloadUpdateEnum {
     return DownloadUpdateEnum.ATTEMPT;

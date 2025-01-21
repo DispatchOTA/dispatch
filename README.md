@@ -20,7 +20,7 @@ Very much in Alpha.
 - [ ] Add artifact model to image versions
 - [ ] Link artifacts to objects
 - [x] (DDI) poll deployments
-- [ ] (DDI) send deployment base
+- [x] (DDI) send deployment base
 - [x] (DDI) send installed base
 - [ ] (DDI) deployment feedback
 - [ ] (DDI) send artifacts

@@ -1,6 +1,7 @@
-import { Controller, Get, NotImplementedException, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, NotImplementedException, Param, Post, Put } from '@nestjs/common';
 import { WorkspaceDeviceDeploymentParams, WorkspaceDeviceImageVersionFilenameParams, WorkspaceDeviceImageVersionParams, WorkspaceDeviceParams } from './dtos/path-params.dto';
 import { DdiService } from './ddi.service';
+import { DeploymentBaseFeedbackDto } from './dtos/deployment-feedback-req.dto';
 
 @Controller('ddi/:workspaceId/controller/v1/:deviceId')
 export class DdiController {
@@ -29,9 +30,10 @@ export class DdiController {
     return this.ddiService.getDeploymentBase(params.workspaceId, params.deviceId, params.deploymentId);
   }
 
+  @HttpCode(200)
   @Post('/deploymentBase/:deploymentId/feedback')
-  postDeploymentFeedback(@Param() params: WorkspaceDeviceDeploymentParams) {
-    return this.ddiService.postDeploymentFeedback(params.workspaceId, params.deviceId, params.deploymentId);
+  postDeploymentFeedback(@Param() params: WorkspaceDeviceDeploymentParams, @Body() deploymentBaseFeedback: DeploymentBaseFeedbackDto) {
+    return this.ddiService.postDeploymentFeedback(params.workspaceId, params.deviceId, params.deploymentId, deploymentBaseFeedback);
   }
 
   @Get('/softwaremodules/:imageVersionId/artifacts')

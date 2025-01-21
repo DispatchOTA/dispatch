@@ -328,10 +328,7 @@ describe('DdiService', () => {
   });
 
   describe('postDeploymentFeedback', () => {
-    it('should return hello world object', async () => {
-      const result = await service.postDeploymentFeedback(mockWorkspaceId, mockDeviceId, mockDeploymentId);
-      expect(result).toEqual({ hello: 'world' });
-    });
+    
   });
 
   describe('getArtifacts', () => {
