@@ -1,8 +1,10 @@
-import { Controller, Get, NotImplementedException, Param, Post, Put } from '@nestjs/common';
+import { Controller, Get, NotImplementedException, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { WorkspaceDeviceDeploymentParams, WorkspaceDeviceImageVersionFilenameParams, WorkspaceDeviceImageVersionParams, WorkspaceDeviceParams } from './dtos/path-params.dto';
 import { DdiService } from './ddi.service';
+import { AuthGuard } from './auth.guard';
 
 @Controller('ddi/:workspaceId/controller/v1/:deviceId')
+@UseGuards(AuthGuard)
 export class DdiController {
 
   constructor(

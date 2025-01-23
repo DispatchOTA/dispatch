@@ -25,6 +25,7 @@ Very much in Alpha.
 - [ ] (DDI) deployment feedback
 - [ ] (DDI) send artifacts
 - [ ] (DDI) send config data
+- [x] (DDI) auth guard
 - [ ] Updating device state
 - [ ] Hardware types and compatibility
 - [ ] Maintain integrity with deletion
