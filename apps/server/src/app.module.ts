@@ -8,6 +8,7 @@ import { ImageVersionModule } from './image-version/image-version.module';
 import { DeploymentModule } from './deployment/deployment.module';
 import { DdiModule } from './ddi/ddi.module';
 import { ImageModule } from './image/image.module';
+import { ObjectStorageModule } from './object-storage/object-storage.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { ImageModule } from './image/image.module';
     ImageVersionModule,
     DeploymentModule,
     DdiModule,
+    ObjectStorageModule,
   ],
   controllers: [AppController],
 })
