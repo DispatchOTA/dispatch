@@ -3,7 +3,10 @@ import { DdiController } from './ddi.controller';
 import { DdiService } from './ddi.service';
 import { NotImplementedException, NotFoundException } from '@nestjs/common';
 import { WorkspaceDeviceParams, WorkspaceDeviceDeploymentParams, WorkspaceDeviceImageVersionParams, WorkspaceDeviceImageVersionFilenameParams } from './dtos/path-params.dto';
-import { ConfigDto, LinkDto, LinksDto, PollingConfigDto, RootDto } from './dtos/root-res.dto';
+import { RootDto } from './dtos/root-res.dto';
+import { AuthGuard } from './auth.guard';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { Device } from '../device/entities/device.entity';
 
 describe('DdiController', () => {
   let controller: DdiController;
@@ -33,6 +36,10 @@ describe('DdiController', () => {
     downloadArtifactMD5: jest.fn(),
   };
 
+  const mockDeviceRepository = {
+    findOne: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [DdiController],
@@ -41,6 +48,11 @@ describe('DdiController', () => {
           provide: DdiService,
           useValue: mockDdiService,
         },
+        {
+          provide: getRepositoryToken(Device),
+          useValue: mockDeviceRepository,
+        },
+        AuthGuard,
       ],
     }).compile();
 

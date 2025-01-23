@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { UpdateDeviceDto } from './dtos/update-device.dto';
 import { CreateDeviceDto } from './dtos/create-device.dto';
 import { DEFAULT_POLLING_TIME } from '../common/consts';
+import { createHash, createRandomToken } from '../common/crypto';
 
 @Injectable()
 export class DeviceService {
@@ -23,6 +24,7 @@ export class DeviceService {
     device.pollingTime = DEFAULT_POLLING_TIME;
     device.state = DeviceState.UNKNOWN;
     device.requestConfig = false;
+    device.accessToken = this.createAccessToken();
     this.logger.log(`Creating device: ${device.uuid}`);
     return this.deviceRepository.save(device);
   }
@@ -72,5 +74,11 @@ export class DeviceService {
     device.description = updateDeviceDto.description;
     this.logger.log(`Updating device: ${device.uuid}`);
     return this.deviceRepository.save(device);
+  }
+
+  private createAccessToken(): string {
+    const randomToken = createRandomToken();
+    this.logger.verbose(`Plain text access token: ${randomToken}`);
+    return createHash('sha256', randomToken);
   }
 }

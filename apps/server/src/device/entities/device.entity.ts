@@ -37,6 +37,10 @@ export class Device {
   @Column()
   requestConfig: boolean;
 
+  @Exclude()
+  @Column()
+  accessToken: string;
+
   @CreateDateColumn()
   createdAt: Date;
 

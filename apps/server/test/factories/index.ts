@@ -10,6 +10,7 @@ export const createMockDevice = (overrides?: Partial<Device>): Device => ({
   state: DeviceState.UNKNOWN,
   pollingTime: '01:00:00',
   requestConfig: false,
+  accessToken: 'access-token-1',
   createdAt: new Date('2024-01-01'),
   updatedAt: new Date('2024-01-01'),
   deployments: [],
