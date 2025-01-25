@@ -6,6 +6,7 @@
   "scripts": {
     "build": "nest build",
     "start:dev": "nest start --watch",
+    "repl": "npm run start:dev -- --entryFile repl",
     "start:prod": "node .",
     "test": "jest"
   },
