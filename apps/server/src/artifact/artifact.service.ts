@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateArtifactDto } from './dtos/create-artifact.dto';
 import { createHash } from '../common/crypto';
 import { ARTIFACTS_BUCKET } from '../common/consts';
+import { ObjectStorageService } from '../object-storage/object-storage.service';
 
 @Injectable()
 export class ArtifactService {
