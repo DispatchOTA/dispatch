@@ -9,6 +9,7 @@ import { DeploymentModule } from './deployment/deployment.module';
 import { DdiModule } from './ddi/ddi.module';
 import { ImageModule } from './image/image.module';
 import { ObjectStorageModule } from './object-storage/object-storage.module';
+import { ArtifactModule } from './artifact/artifact.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { ObjectStorageModule } from './object-storage/object-storage.module';
     DeploymentModule,
     DdiModule,
     ObjectStorageModule,
+    ArtifactModule,
   ],
   controllers: [AppController],
 })
