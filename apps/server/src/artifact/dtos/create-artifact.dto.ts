@@ -1,5 +1,5 @@
-import { IsNotEmpty, IsNumber, IsString, MaxLength, MinLength } from 'class-validator';
-import { MIN_FILENAME_LEN, MAX_FILENAME_LEN } from '../../common/consts';
+import { IsNotEmpty, IsNumber, IsString, Max, MaxLength, Min, MinLength } from 'class-validator';
+import { MIN_FILENAME_LEN, MAX_FILENAME_LEN, MIN_FILE_SIZE, MAX_FILE_SIZE} from '../../common/consts';
 
 export class CreateArtifactDto {
   @IsNotEmpty()
@@ -10,7 +10,8 @@ export class CreateArtifactDto {
 
   @IsNotEmpty()
   @IsNumber()
-  // VALIDATE
+  @Min(MIN_FILE_SIZE)
+  @Max(MAX_FILE_SIZE)
   size: number;
 
   @IsNotEmpty()
