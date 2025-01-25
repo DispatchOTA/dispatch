@@ -16,7 +16,7 @@ Very much in Alpha.
 - [x] CRUD images
 - [x] CRUD image versions
 - [x] (DDI) wire up basic API
-- [ ] Set up object storage
+- [x] Set up object storage
 - [ ] Add artifact model to image versions
 - [ ] Link artifacts to objects
 - [x] (DDI) poll deployments
