@@ -46,7 +46,7 @@ export const AsyncTable = <T extends { uuid: string }>({
   if (!data?.length) return <EmptyState>{emptyMessage}</EmptyState>;
 
   return (
-    <table className='min-w-full divide-y divide-gray-200'>
+    <table className='min-w-full divide-y divide-gray-200 border border-gray-200'>
       <thead className='bg-gray-50'>
         <tr>
           {columns.map((column, index) => (
