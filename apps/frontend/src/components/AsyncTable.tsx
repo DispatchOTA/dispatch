@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { fetchData } from '../utils';
+import axios from 'axios';
+import { BASE_API_URL } from '../consts';
 
 export interface AsyncTableColumn<T> {
   header: string;
@@ -13,6 +14,11 @@ export interface AsyncTableProps<T> {
   emptyMessage?: string;
   errorMessage?: string;
 }
+
+const fetchData = async <T,>(endpoint: string): Promise<T[]> => {
+  const { data } = await axios.get(BASE_API_URL + endpoint);
+  return data;
+};
 
 const LoadingState = () => {
   return <div>Loading...</div>;
@@ -74,7 +80,7 @@ export const AsyncTable = <T extends { uuid: string } & Record<keyof T, React.Re
               <TableColumn key={index}>
                 {typeof column.accessor === 'function' 
                   ? column.accessor(item)
-                  : item[column.accessor]}
+                  : item[column.accessor] || '-'}
               </TableColumn>
             ))}
           </tr>
