@@ -67,9 +67,9 @@ export class Deployment {
   toDDiDto(): DeploymentDDIDto {
     const chunkDto = new ChunkDto();
     chunkDto.part = ''; // TODO
-    chunkDto.version = ''; // TODO
+    chunkDto.version = this.imageVersion.id;
     chunkDto.name = ''; // TODO
-    chunkDto.artifacts = []; // TODO
+    chunkDto.artifacts = this.imageVersion.artifacts.map(artifact => artifact.toDDIDto(this.device.id));
     chunkDto.metadata = [];
 
     const deploymentDto = new DeploymentDto();

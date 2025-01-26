@@ -1,3 +1,4 @@
+import { Artifact } from '../../artifact/entities/artifact.entity';
 import { Deployment } from '../../deployment/entities/deployment.entity';
 import { Image } from '../../image/entities/image.entity';
 import {
@@ -32,4 +33,7 @@ export class ImageVersion {
 
   @OneToMany(() => Deployment, (deployment) => deployment.imageVersion)
   deployments: Deployment[];
+
+  @OneToMany(() => Artifact, (artifact) => artifact.imageVersion)
+  artifacts: Artifact[];
 }

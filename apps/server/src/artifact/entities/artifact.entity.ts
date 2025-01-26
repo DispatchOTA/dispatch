@@ -1,12 +1,11 @@
 import { Entity, Column, PrimaryGeneratedColumn, UpdateDateColumn, CreateDateColumn, ManyToOne } from 'typeorm';
-import { Exclude } from 'class-transformer';
 import { ImageVersion } from '../../image-version/entities/image-version.entity';
-// import { ArtifactDto, HashesDto, LinkDto, LinksDto } from '../ddi/dtos/res/deployment.dto';
-// import { Workspace } from '../workspace/workspace.entity';
-// import { CommonService } from '../common/common.service';
+import { ArtifactDto, HashesDto, LinkDto, LinksDto } from '../../ddi/dtos/artifacts.res.dto'
+import { ConfigService } from '@nestjs/config';
 
 @Entity()
 export class Artifact {
+  // constructor(private readonly configService: ConfigService) {}
 
   @PrimaryGeneratedColumn('uuid')
   uuid: string;
@@ -26,33 +25,26 @@ export class Artifact {
   @Column()
   sha256: string;
 
-  @Exclude()
-  @Column({ default: false })
-  deleted: boolean;
-
   @CreateDateColumn()
   createdAt: Date;
 
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToOne(() => ImageVersion, (imageVersion) => imageVersion.deployments)
+  @ManyToOne(() => ImageVersion, (imageVersion) => imageVersion.artifacts)
   imageVersion: ImageVersion;
 
-  /*
-  toDDIDto(): ArtifactDto {
+  toDDIDto(deviceId: string): ArtifactDto {
     const hashes = new HashesDto();
     hashes.sha1 = this.sha1;
     hashes.md5 = this.md5;
     hashes.sha256 = this.sha256;
 
-    const downloadUrl = this.commonService.buildArtifactDownloadLink('tenantId', 'deviceID', 'imageVersionId', 'filename');
+    const downloadUrl = this.buildDownloadLink(deviceId);
     const downloadLinkDto = new LinkDto();
     downloadLinkDto.href = downloadUrl;
 
-    const md5Url = this.commonService.buildArtifactMd5ink(
-      this.workspace.id,
-      'deviceID', 'imageVersionId', 'filename');
+    const md5Url = this.buildMd5SumLink(deviceId);
     const md5sumLinkDto = new LinkDto();
     md5sumLinkDto.href = md5Url;
 
@@ -70,5 +62,28 @@ export class Artifact {
 
     return artifact;
   }
-  */
+
+  getOrigin() {
+    // return this.configService.get<string>('ORIGIN');
+    return 'http://localhost:3000';
+  }
+
+  buildBaseUrl(deviceId: string) {
+    const workspaceId = 'workspace1' // TODO: implement workspaceId
+    return `${this.getOrigin()}/ddi/${workspaceId}/controller/v1/${deviceId}`;
+  }
+
+  buildDownloadLink(deviceId: string) {
+    const baseUrl = this.buildBaseUrl(deviceId);
+    const imageVersionId = this.imageVersion.id;
+    const filename = this.filename;
+    return `${baseUrl}/softwaremodules/${imageVersionId}/filename/${filename}`;
+  }
+
+  buildMd5SumLink(deviceId: string) {
+    const baseUrl = this.buildBaseUrl(deviceId);
+    const imageVersionId = this.imageVersion.id;
+    const filename = this.filename;
+    return `${baseUrl}/softwaremodules/${imageVersionId}/filename/${filename}.MD5SUM`;
+  }  
 }
