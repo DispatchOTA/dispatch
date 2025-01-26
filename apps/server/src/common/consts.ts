@@ -16,6 +16,7 @@ export const MIN_FILENAME_LEN = 2;
 export const MAX_FILENAME_LEN = 50;
 export const MIN_FILE_SIZE = 1;
 export const MAX_FILE_SIZE = 1073741824; // 1GB in bytes
+export const POLLING_TIME_REGEX = /^([0-9]{2}):([0-9]{2}):([0-9]{2})$/; // HH:MM:SS
 
 // defaults
 export const DEFAULT_POLLING_TIME = '01:00:00'; // 1 hour
