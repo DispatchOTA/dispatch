@@ -13,9 +13,14 @@ interface Image {
 }
 
 const imageColumns: AsyncTableColumn<Image>[] = [
-  { 
-    header: 'ID', accessor: 'id' },
-  { header: 'Description', accessor: 'description' },
+  {
+    header: 'ID',
+    accessor: 'id'
+  },
+  {
+    header: 'Description',
+    accessor: 'description'
+  },
   { 
     header: 'Created', 
     accessor: (image) => <DateTime date={image.createdAt} />

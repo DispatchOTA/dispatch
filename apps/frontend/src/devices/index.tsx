@@ -15,14 +15,22 @@ interface Device {
 }
 
 const deviceColumns: AsyncTableColumn<Device>[] = [
-  { 
-    header: 'ID', accessor: 'id' },
-  { header: 'Description', accessor: 'description' },
+  {
+    header: 'ID',
+    accessor: 'id'
+  },
+  {
+    header: 'Description',
+    accessor: 'description'
+  },
   { 
     header: 'State', 
     accessor: (device) => <Pill>{toSentenceCase(device.state)}</Pill>
   },
-  { header: 'Polling Time', accessor: 'pollingTime' },
+  {
+    header: 'Polling Time',
+    accessor: 'pollingTime'
+  },
   { 
     header: 'Created', 
     accessor: (device) => <DateTime date={device.createdAt} />

@@ -14,15 +14,15 @@ export interface AsyncTableProps<T> {
   errorMessage?: string;
 }
 
-const AsyncLoadingState = () => {
+const LoadingState = () => {
   return <div>Loading...</div>;
 }
 
-const AsyncErrorState = ({children}: {children: React.ReactNode}) => {
+const ErrorState = ({children}: {children: React.ReactNode}) => {
   return <div className='text-red-500'>{children}</div>;
 }
 
-const AsyncEmptyState = ({children}: {children: React.ReactNode}) => {
+const EmptyState = ({children}: {children: React.ReactNode}) => {
   return <div>{children}</div>;
 }
 
@@ -47,15 +47,15 @@ export const AsyncTable = <T extends { uuid: string } & Record<keyof T, React.Re
   });
 
   if (isLoading) {
-    return <AsyncLoadingState />
+    return <LoadingState />
   }
 
   if (error) {
-    return <AsyncErrorState>{errorMessage}</AsyncErrorState>
+    return <ErrorState>{errorMessage}</ErrorState>
   }
 
   if (items?.length === 0) {
-    return <AsyncEmptyState>{emptyMessage}</AsyncEmptyState>
+    return <EmptyState>{emptyMessage}</EmptyState>
   }
 
   return (
