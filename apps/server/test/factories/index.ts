@@ -1,3 +1,4 @@
+import { Artifact } from "src/artifact/entities/artifact.entity";
 import { Deployment, DeploymentState } from "../../src/deployment/entities/deployment.entity";
 import { Device, DeviceState } from "../../src/device/entities/device.entity";
 import { ImageVersion } from "../../src/image-version/entities/image-version.entity";
@@ -35,6 +36,7 @@ export const createMockImageVersion = (overrides?: Partial<ImageVersion>): Image
   updatedAt: new Date('2024-01-01'),
   image: createMockImage(),
   deployments: [],
+  artifacts: [],
   ...overrides
 });
 
@@ -49,5 +51,23 @@ export const createMockDeployment = (overrides?: Partial<Deployment>): Deploymen
   getUpdateType: jest.fn(),
   getMaintenanceWindow: jest.fn(),
   toDDiDto: jest.fn(),
+  ...overrides
+});
+
+export const createMockArtifact = (overrides?: Partial<Artifact>): Artifact => ({
+  uuid: 'artifact-uuid-1',
+  filename: 'artifact-filename-1',
+  size: 100,
+  md5: 'md5-1',
+  sha1: 'sha1-1',
+  sha256: 'sha256-1',
+  createdAt: new Date('2024-01-01'),
+  updatedAt: new Date('2024-01-01'),
+  imageVersion: createMockImageVersion(),
+  buildDownloadLink: jest.fn(),
+  buildMd5SumLink: jest.fn(),
+  toDDIDto: jest.fn(),
+  buildBaseUrl: jest.fn(),
+  getOrigin: jest.fn(),
   ...overrides
 });
