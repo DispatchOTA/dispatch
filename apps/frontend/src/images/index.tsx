@@ -1,6 +1,4 @@
 import { Layout } from '../components/Layout';
-// import { toSentenceCase } from '../utils';
-// import { Pill } from '../components/Pill';
 import { AsyncTable, AsyncTableColumn } from '../components/AsyncTable';
 import { DateTime } from '../components/DateTime';
 

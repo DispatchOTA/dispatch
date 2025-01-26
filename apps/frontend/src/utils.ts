@@ -1,5 +1,6 @@
 import axios from 'axios';
 
+// TODO: make this configurable
 const BASE_API_URL = 'http://localhost:3000';
 
 export const toSentenceCase = (txt: string) => txt.charAt(0).toUpperCase() + txt.slice(1).toLowerCase();
