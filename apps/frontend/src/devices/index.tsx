@@ -90,6 +90,7 @@ const Page = () => {
         columns={deviceColumns}
         emptyMessage='No devices found'
         errorMessage='Error loading devices'
+        getRowHref={(device) => `/devices/${device.uuid}`}
       />
     </Layout>
   )

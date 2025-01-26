@@ -4,6 +4,8 @@ import Home from './home';
 import Devices from './devices';
 import Images from './images';
 import Workspace from './workspace';
+import DeviceDetail from './devices/detail';
+import ImageDetail from './images/detail';
 
 const queryClient = new QueryClient();
 
@@ -14,7 +16,9 @@ const App = () => {
         <Routes>
           <Route path='/' element={<Home />} />
           <Route path='/devices' element={<Devices />} />
+          <Route path='/devices/:id' element={<DeviceDetail />} />
           <Route path='/images' element={<Images />} />
+          <Route path='/images/:id' element={<ImageDetail />} />
           <Route path='/workspace' element={<Workspace />} />
         </Routes>
       </BrowserRouter>

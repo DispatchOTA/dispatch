@@ -1,24 +1,21 @@
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { BASE_API_URL } from '../consts';
+import { useNavigate } from 'react-router-dom';
 
 export interface AsyncTableColumn<T> {
   header: string;
   accessor: keyof T | ((item: T) => React.ReactNode);
 }
 
-export interface AsyncTableProps<T> {
+interface AsyncTableProps<T> {
   queryKey: string;
   endpoint: string;
   columns: AsyncTableColumn<T>[];
-  emptyMessage?: string;
-  errorMessage?: string;
+  emptyMessage: string;
+  errorMessage: string;
+  getRowHref: (item: T) => string;
 }
-
-const fetchData = async <T,>(endpoint: string): Promise<T[]> => {
-  const { data } = await axios.get(BASE_API_URL + endpoint);
-  return data;
-};
 
 const LoadingState = () => {
   return <div>Loading...</div>;
@@ -40,47 +37,48 @@ const TableHeader = ({children}: {children: React.ReactNode}) => {
   return <th className='py-3 px-4 text-left text-sm font-semibold text-zinc-900'>{children}</th>
 }
 
-export const AsyncTable = <T extends { uuid: string } & Record<keyof T, React.ReactNode>>({ 
+export const AsyncTable = <T extends { uuid: string }>({ 
   queryKey,
   endpoint,
   columns,
   emptyMessage = 'No items found',
-  errorMessage = 'Error loading data'
+  errorMessage = 'Error loading data',
+  getRowHref
 }: AsyncTableProps<T>) => {
-  const { data: items, isLoading, error } = useQuery({
+  const navigate = useNavigate();
+
+
+  const { data, isLoading, isError } = useQuery({
     queryKey: [queryKey],
-    queryFn: () => fetchData<T>(endpoint),
+    queryFn: () => axios.get(BASE_API_URL + endpoint).then(res => res.data)
   });
 
-  if (isLoading) {
-    return <LoadingState />
-  }
+  if (isLoading) return <LoadingState />;
+  if (isError) return <ErrorState>{errorMessage}</ErrorState>;
+  if (!data?.length) return <EmptyState>{emptyMessage}</EmptyState>;
 
-  if (error) {
-    return <ErrorState>{errorMessage}</ErrorState>
-  }
-
-  if (items?.length === 0) {
-    return <EmptyState>{emptyMessage}</EmptyState>
-  }
 
   return (
-    <table className='min-w-full bg-white rounded'>
-      <thead className='border-b border-zinc-200'>
+    <table className="min-w-full divide-y divide-gray-200">
+      <thead className="bg-gray-50">
         <tr>
           {columns.map((column, index) => (
             <TableHeader key={index}>{column.header}</TableHeader>
           ))}
         </tr>
       </thead>
-      <tbody>
-        {items?.map((item) => (
-          <tr key={item.uuid} className='border-b border-zinc-200'>
+      <tbody className="bg-white divide-y divide-gray-200">
+        {data?.map((item: T) => (
+          <tr 
+            key={item.uuid}
+            onClick={() => navigate(getRowHref(item))}
+            className="hover:bg-gray-100 cursor-pointer"
+          >
             {columns.map((column, index) => (
               <TableColumn key={index}>
                 {typeof column.accessor === 'function' 
                   ? column.accessor(item)
-                  : item[column.accessor] || '-'}
+                  : (item[column.accessor] as React.ReactNode) || '-'}
               </TableColumn>
             ))}
           </tr>

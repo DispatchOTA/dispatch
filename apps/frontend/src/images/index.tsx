@@ -91,6 +91,7 @@ const Page = () => {
         columns={imageColumns}
         emptyMessage='No images found'
         errorMessage='Error loading images'
+        getRowHref={(image) => `/images/${image.uuid}`}
       />
     </Layout>
   )
