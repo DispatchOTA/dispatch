@@ -2,6 +2,7 @@ import { Entity, Column, PrimaryGeneratedColumn, UpdateDateColumn, CreateDateCol
 import { ImageVersion } from '../../image-version/entities/image-version.entity';
 import { ArtifactDto, HashesDto, LinkDto, LinksDto } from '../../ddi/dtos/artifacts.res.dto'
 import { ConfigService } from '@nestjs/config';
+import { Workspace } from '../../workspace/entities/workspace.entity';
 
 @Entity()
 export class Artifact {
@@ -33,6 +34,9 @@ export class Artifact {
 
   @ManyToOne(() => ImageVersion, (imageVersion) => imageVersion.artifacts)
   imageVersion: ImageVersion;
+
+  @ManyToOne(() => Workspace, (workspace) => workspace.artifacts)
+  workspace: Workspace;
 
   toDDIDto(deviceId: string): ArtifactDto {
     const hashes = new HashesDto();

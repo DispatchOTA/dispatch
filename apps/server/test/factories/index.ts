@@ -1,8 +1,9 @@
-import { Artifact } from "src/artifact/entities/artifact.entity";
-import { Deployment, DeploymentState } from "../../src/deployment/entities/deployment.entity";
-import { Device, DeviceState } from "../../src/device/entities/device.entity";
-import { ImageVersion } from "../../src/image-version/entities/image-version.entity";
-import { Image } from "../../src/image/entities/image.entity";
+import { Artifact } from '../../src/artifact/entities/artifact.entity';
+import { Deployment, DeploymentState } from'../../src/deployment/entities/deployment.entity';
+import { Device, DeviceState } from '../../src/device/entities/device.entity';
+import { ImageVersion } from '../../src/image-version/entities/image-version.entity';
+import { Image } from '../../src/image/entities/image.entity';
+import { Workspace } from '../../src/workspace/entities/workspace.entity';
 
 export const createMockDevice = (overrides?: Partial<Device>): Device => ({
   uuid: 'device-uuid-1',
@@ -15,6 +16,7 @@ export const createMockDevice = (overrides?: Partial<Device>): Device => ({
   createdAt: new Date('2024-01-01'),
   updatedAt: new Date('2024-01-01'),
   deployments: [],
+  workspace: createMockWorkspace(),
   ...overrides
 });
 
@@ -25,6 +27,7 @@ export const createMockImage = (overrides?: Partial<Image>): Image => ({
   createdAt: new Date('2024-01-01'),
   updatedAt: new Date('2024-01-01'),
   versions: [],
+  workspace: createMockWorkspace(),
   ...overrides
 });
 
@@ -37,6 +40,7 @@ export const createMockImageVersion = (overrides?: Partial<ImageVersion>): Image
   image: createMockImage(),
   deployments: [],
   artifacts: [],
+  workspace: createMockWorkspace(),
   ...overrides
 });
 
@@ -51,6 +55,7 @@ export const createMockDeployment = (overrides?: Partial<Deployment>): Deploymen
   getUpdateType: jest.fn(),
   getMaintenanceWindow: jest.fn(),
   toDDiDto: jest.fn(),
+  workspace: createMockWorkspace(),
   ...overrides
 });
 
@@ -69,5 +74,20 @@ export const createMockArtifact = (overrides?: Partial<Artifact>): Artifact => (
   toDDIDto: jest.fn(),
   buildBaseUrl: jest.fn(),
   getOrigin: jest.fn(),
+  workspace: createMockWorkspace(),
+  ...overrides
+});
+
+export const createMockWorkspace = (overrides?: Partial<Workspace>): Workspace => ({
+  uuid: 'workspace-uuid-1',
+  id: 'workspace-id-1',
+  defaultPollingTime: '00:05:00',
+  createdAt: new Date('2024-01-01'),
+  updatedAt: new Date('2024-01-01'),
+  devices: [],
+  deployments: [],
+  images: [],
+  imageVersions: [],
+  artifacts: [],
   ...overrides
 });

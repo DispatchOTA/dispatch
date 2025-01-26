@@ -10,6 +10,7 @@ import { DdiModule } from './ddi/ddi.module';
 import { ImageModule } from './image/image.module';
 import { ObjectStorageModule } from './object-storage/object-storage.module';
 import { ArtifactModule } from './artifact/artifact.module';
+import { WorkspaceModule } from './workspace/workspace.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { ArtifactModule } from './artifact/artifact.module';
     DdiModule,
     ObjectStorageModule,
     ArtifactModule,
+    WorkspaceModule,
   ],
   controllers: [AppController],
 })

@@ -17,14 +17,15 @@ Very much in Alpha.
 - [x] CRUD image versions
 - [x] (DDI) wire up basic API
 - [x] Set up object storage
-- [ ] Add artifact model to image versions
-- [ ] Link artifacts to objects
+- [x] Add artifact model to image versions
+- [x] Link artifacts to objects
+- [ ] Workspaces
 - [x] (DDI) poll deployments
-- [ ] (DDI) send deployment base
+- [x] (DDI) send deployment base
 - [x] (DDI) send installed base
 - [ ] (DDI) deployment feedback
 - [ ] (DDI) send artifacts
-- [ ] (DDI) send config data
+- [ ] (DDI) accept config data
 - [x] (DDI) auth guard
 - [ ] Updating device state
 - [ ] Hardware types and compatibility
