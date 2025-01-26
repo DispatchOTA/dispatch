@@ -1,6 +1,6 @@
 {
   "name": "server",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "",
   "main": "dist/src/main",
   "scripts": {
@@ -10,9 +10,6 @@
     "start:prod": "node .",
     "test": "jest"
   },
-  "keywords": [],
-  "author": "",
-  "license": "AGPL-3.0",
   "dependencies": {
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.0",
