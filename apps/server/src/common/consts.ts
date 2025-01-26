@@ -8,10 +8,10 @@ export const ENV_PROVISION = 'provision';
 export const ARTIFACTS_BUCKET = 'artifacts';
 
 // validation
-export const MIN_ID_LEN = 1;
-export const MAX_ID_LEN = 500;
+export const MIN_ID_LEN = 2;
+export const MAX_ID_LEN = 50;
 export const MIN_DESC_LEN = 0;
-export const MAX_DESC_LEN = 5000;
+export const MAX_DESC_LEN = 2000;
 export const MIN_FILENAME_LEN = 2;
 export const MAX_FILENAME_LEN = 50;
 export const MIN_FILE_SIZE = 1;
