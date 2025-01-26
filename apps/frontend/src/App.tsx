@@ -6,6 +6,7 @@ import Images from './images';
 import Workspace from './workspace';
 import DeviceDetail from './devices/detail';
 import ImageDetail from './images/detail';
+
 const queryClient = new QueryClient();
 
 const App = () => {

@@ -17,11 +17,6 @@ interface AsyncTableProps<T> {
   getRowHref: (item: T) => string;
 }
 
-// const fetchData = async <T,>(endpoint: string): Promise<T[]> => {
-//   const { data } = await axios.get(BASE_API_URL + endpoint);
-//   return data;
-// };
-
 const LoadingState = () => {
   return <div>Loading...</div>;
 }
@@ -76,7 +71,7 @@ export const AsyncTable = <T extends { uuid: string }>({
         {data?.map((item: T) => (
           <tr 
             key={item.uuid}
-            onClick={() => getRowHref && navigate(getRowHref(item))}
+            onClick={() => navigate(getRowHref(item))}
             className="hover:bg-gray-100 cursor-pointer"
           >
             {columns.map((column, index) => (
