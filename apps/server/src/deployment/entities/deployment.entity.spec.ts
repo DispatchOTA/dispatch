@@ -47,7 +47,7 @@ describe('Deployment', () => {
       expect(result.deployment.chunks).toHaveLength(1);
       const chunk = result.deployment.chunks[0];
       expect(chunk.part).toBe('');
-      expect(chunk.version).toBe('');
+      expect(chunk.version).toBe('1.0.0');
       expect(chunk.name).toBe('');
       expect(chunk.artifacts).toEqual([]);
       expect(chunk.metadata).toEqual([]);
