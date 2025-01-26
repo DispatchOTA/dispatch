@@ -15,3 +15,10 @@ export interface Image {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface Deployment {
+  uuid: string;
+  state: string;
+  createdAt: string;
+  updatedAt: string;
+}

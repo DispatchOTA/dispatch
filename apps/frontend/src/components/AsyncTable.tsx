@@ -10,7 +10,7 @@ export interface AsyncTableColumn<T> {
 }
 
 interface AsyncTableProps<T> {
-  queryKey: string | string[];
+  queryKey: string;
   endpoint: string;
   columns: AsyncTableColumn<T>[];
   emptyMessage: string;
@@ -46,15 +46,15 @@ export const AsyncTable = <T extends { uuid: string }>({
   if (!data?.length) return <EmptyState>{emptyMessage}</EmptyState>;
 
   return (
-    <table className="min-w-full divide-y divide-gray-200">
-      <thead className="bg-gray-50">
+    <table className='min-w-full divide-y divide-gray-200'>
+      <thead className='bg-gray-50'>
         <tr>
           {columns.map((column, index) => (
             <TableHeader key={index}>{column.header}</TableHeader>
           ))}
         </tr>
       </thead>
-      <tbody className="bg-white divide-y divide-gray-200">
+      <tbody className='bg-white divide-y divide-gray-200'>
         {data?.map((item: T) => (
           <tr 
             key={item.uuid}
