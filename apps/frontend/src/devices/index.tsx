@@ -7,8 +7,8 @@ import { CreateDialog } from '../components/CreateDialog';
 import { CreateForm } from '../components/CreateForm';
 import type { Field } from '../components/CreateForm';
 import { MAX_DESC_LEN, MAX_ID_LEN, MIN_ID_LEN } from '../consts';
-
-
+import { LayoutHeader } from '../components/LayoutHeader';
+import { Device } from '../../types';
 
 interface CreateDeviceDto {
   id: string;
@@ -33,16 +33,6 @@ const deviceFields: Field<CreateDeviceDto>[] = [
     }
   }
 ];
-
-interface Device {
-  uuid: string;
-  id: string;
-  description: string;
-  state: string;
-  pollingTime: string;
-  createdAt: string;
-  updatedAt: string;
-}
 
 const deviceColumns: AsyncTableColumn<Device>[] = [
   {
@@ -70,8 +60,7 @@ const deviceColumns: AsyncTableColumn<Device>[] = [
 const Page = () => {
   return (
     <Layout>
-      <div className='flex justify-between items-center my-8'>
-        <h1 className='text-3xl font-bold'>Devices</h1>
+      <LayoutHeader title='Devices'>
         <CreateDialog 
           title="Create Device"
           description="Create a new device"
@@ -83,7 +72,7 @@ const Page = () => {
             onSuccess={() => {}}
           />
         </CreateDialog>
-      </div>
+      </LayoutHeader>
       <AsyncTable<Device>
         queryKey='devices'
         endpoint='/devices'

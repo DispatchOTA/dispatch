@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { BASE_API_URL } from '../consts';
 import { useNavigate } from 'react-router-dom';
+import { LoadingState, ErrorState, EmptyState } from './AsyncUtils';
 
 export interface AsyncTableColumn<T> {
   header: string;
@@ -14,19 +15,7 @@ interface AsyncTableProps<T> {
   columns: AsyncTableColumn<T>[];
   emptyMessage: string;
   errorMessage: string;
-  getRowHref: (item: T) => string;
-}
-
-const LoadingState = () => {
-  return <div>Loading...</div>;
-}
-
-const ErrorState = ({children}: {children: React.ReactNode}) => {
-  return <div className='text-red-500'>{children}</div>;
-}
-
-const EmptyState = ({children}: {children: React.ReactNode}) => {
-  return <div>{children}</div>;
+  getRowHref?: (item: T) => string;
 }
 
 const TableColumn = ({children}: {children: React.ReactNode}) => {
@@ -47,7 +36,6 @@ export const AsyncTable = <T extends { uuid: string }>({
 }: AsyncTableProps<T>) => {
   const navigate = useNavigate();
 
-
   const { data, isLoading, isError } = useQuery({
     queryKey: [queryKey],
     queryFn: () => axios.get(BASE_API_URL + endpoint).then(res => res.data)
@@ -57,22 +45,21 @@ export const AsyncTable = <T extends { uuid: string }>({
   if (isError) return <ErrorState>{errorMessage}</ErrorState>;
   if (!data?.length) return <EmptyState>{emptyMessage}</EmptyState>;
 
-
   return (
-    <table className="min-w-full divide-y divide-gray-200">
-      <thead className="bg-gray-50">
+    <table className='min-w-full divide-y divide-gray-200 border border-gray-200'>
+      <thead className='bg-gray-50'>
         <tr>
           {columns.map((column, index) => (
             <TableHeader key={index}>{column.header}</TableHeader>
           ))}
         </tr>
       </thead>
-      <tbody className="bg-white divide-y divide-gray-200">
+      <tbody className='bg-white divide-y divide-gray-200'>
         {data?.map((item: T) => (
           <tr 
             key={item.uuid}
-            onClick={() => navigate(getRowHref(item))}
-            className="hover:bg-gray-100 cursor-pointer"
+            onClick={() => getRowHref && navigate(getRowHref(item))}
+            className={getRowHref ? 'cursor-pointer hover:bg-gray-100' : ''}
           >
             {columns.map((column, index) => (
               <TableColumn key={index}>
