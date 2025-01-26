@@ -138,7 +138,7 @@ describe('ImageVersionService', () => {
         where: { uuid: 'imageUuid' }
       });
       expect(mockImageVersionRepository.findOne).toHaveBeenCalledWith({
-        where: { uuid: 'versionUuid', image: mockImage }
+        where: { uuid: 'versionUuid', image: { uuid: 'imageUuid' } }
       });
       expect(mockImageVersionRepository.save).toHaveBeenCalledWith(
         expect.objectContaining({
