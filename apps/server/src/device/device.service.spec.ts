@@ -175,11 +175,6 @@ describe('DeviceService', () => {
         where: { uuid: 'uuid' },
         relations: ['deployments'],
         relationLoadStrategy: 'query',
-        order: {
-          deployments: {
-            createdAt: 'DESC'
-          }
-        }
       });
     });
 
@@ -198,11 +193,6 @@ describe('DeviceService', () => {
         where: { uuid: 'uuid' },
         relations: ['deployments'],
         relationLoadStrategy: 'query',
-        order: {
-          deployments: {
-            createdAt: 'DESC'
-          }
-        }
       });
     });
 
@@ -215,11 +205,6 @@ describe('DeviceService', () => {
         where: { uuid: 'uuid' },
         relations: ['deployments'],
         relationLoadStrategy: 'query',
-        order: {
-          deployments: {
-            createdAt: 'DESC'
-          }
-        }
       });
     });
   });

@@ -6,7 +6,8 @@ import { CreateForm, Field } from '../components/CreateForm';
 import { UseFormRegister } from 'react-hook-form';
 import { MAX_DESC_LEN, MAX_ID_LEN } from '../consts';
 import { MIN_ID_LEN } from '../consts';
-
+import { LayoutHeader } from '../components/LayoutHeader';
+import { Image } from '../../types';
 interface CreateImageDto {
   id: string;
   description: string;
@@ -45,14 +46,6 @@ const imageFields: Field<CreateImageDto>[] = [
   }
 ];
 
-interface Image {
-  uuid: string;
-  id: string;
-  description: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
 const imageColumns: AsyncTableColumn<Image>[] = [
   {
     header: 'ID',
@@ -71,8 +64,7 @@ const imageColumns: AsyncTableColumn<Image>[] = [
 const Page = () => {
   return (
     <Layout>
-      <div className='flex justify-between items-center my-8'>
-        <h1 className='text-3xl font-bold'>Images</h1>
+      <LayoutHeader title='Images'>
         <CreateDialog 
           title="Create Image"
           description="Create a new image"
@@ -84,7 +76,7 @@ const Page = () => {
             onSuccess={() => {}}
           />
         </CreateDialog>
-      </div>
+      </LayoutHeader>
       <AsyncTable<Image>
         queryKey='images'
         endpoint='/images'

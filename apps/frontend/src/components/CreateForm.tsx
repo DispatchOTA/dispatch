@@ -2,7 +2,7 @@ import { useForm, UseFormRegister, Path, FieldValues, RegisterOptions } from 're
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { Button } from './Button';
-import { ErrorMessage, Input, Label } from './Forms';
+import { ErrorMessage, Input, Label } from './FormUtils';
 import { BASE_API_URL } from '../consts';
 
 export interface Field<T extends FieldValues> {

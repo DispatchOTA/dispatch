@@ -50,12 +50,7 @@ export class DeviceService {
     const device = await this.deviceRepository.findOne({
       where: { uuid },
       relations: ['deployments'],
-      relationLoadStrategy: 'query',
-      order: {
-        deployments: {
-          createdAt: 'DESC'
-        }
-      }
+      relationLoadStrategy: 'query'
     });
     if (!device) {
       this.logger.error(`Device not found: ${uuid}`);
