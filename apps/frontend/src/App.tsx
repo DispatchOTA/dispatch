@@ -1,9 +1,20 @@
-const Page = () => {
+import { BrowserRouter, Routes, Route } from 'react-router';
+import Home from './home';
+import Devices from './devices';
+import Images from './images';
+import Workspace from './workspace';
+
+const App = () => {
   return (
-    <div className="bg-zinc-100">
-      <h1 className="text-4xl font-bold">Dispatch</h1>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path='/' element={<Home />} />
+        <Route path='/devices' element={<Devices />} />
+        <Route path='/images' element={<Images />} />
+        <Route path='/workspace' element={<Workspace />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 
-export default Page;
+export default App;
