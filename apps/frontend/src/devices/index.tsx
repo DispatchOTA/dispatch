@@ -1,8 +1,10 @@
+import { Layout } from '../components/layout';
+
 export const Page = () => {
   return (
-    <div>
+    <Layout>
       <h1>Devices</h1>
-    </div>
+    </Layout>
   )
 }
 

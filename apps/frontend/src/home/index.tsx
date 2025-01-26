@@ -1,13 +1,10 @@
-import { Link } from 'react-router';
+import { Layout } from '../components/layout';
 
 export const Page = () => {
   return (
-    <div>
+    <Layout>
       <h1>Home</h1>
-      <Link to='/devices'>Devices</Link>
-      <Link to='/images'>Images</Link>
-      <Link to='/workspace'>Workspace</Link>
-    </div>
+    </Layout>
   )
 }
 
