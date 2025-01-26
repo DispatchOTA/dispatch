@@ -11,6 +11,7 @@ import { ImageModule } from './image/image.module';
 import { ObjectStorageModule } from './object-storage/object-storage.module';
 import { ArtifactModule } from './artifact/artifact.module';
 import { WorkspaceModule } from './workspace/workspace.module';
+import { AppService } from './app.service';
 
 @Module({
   imports: [
@@ -38,5 +39,6 @@ import { WorkspaceModule } from './workspace/workspace.module';
     WorkspaceModule,
   ],
   controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}
