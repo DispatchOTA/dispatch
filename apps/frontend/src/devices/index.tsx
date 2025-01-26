@@ -2,6 +2,7 @@ import { Layout } from '../components/Layout';
 import { toSentenceCase } from '../utils';
 import { Pill } from '../components/Pill';
 import { AsyncTable, AsyncTableColumn } from '../components/AsyncTable';
+import { DateTime } from '../components/DateTime';
 
 interface Device {
   uuid: string;
@@ -24,11 +25,11 @@ const deviceColumns: AsyncTableColumn<Device>[] = [
   { header: 'Polling Time', accessor: 'pollingTime' },
   { 
     header: 'Created', 
-    accessor: (device) => new Date(device.createdAt).toLocaleDateString()
+    accessor: (device) => <DateTime date={device.createdAt} />
   },
 ];
 
-const Devices = () => {
+const Page = () => {
   return (
     <Layout>
       <h1 className='text-3xl font-bold my-4'>Devices</h1>
@@ -43,4 +44,4 @@ const Devices = () => {
   )
 }
 
-export default Devices;
+export default Page;
