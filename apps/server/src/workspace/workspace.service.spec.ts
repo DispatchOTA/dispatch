@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { WorkspaceService } from './workspace.service';
 import { Workspace } from './entities/workspace.entity';
 import { CreateWorkspaceDto } from './dtos/create-workspace.dto';
+import { NotFoundException } from '@nestjs/common';
 
 describe('WorkspaceService', () => {
   let service: WorkspaceService;
@@ -20,6 +21,7 @@ describe('WorkspaceService', () => {
   const mockRepository = {
     create: jest.fn(),
     save: jest.fn(),
+    findOne: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -59,4 +61,26 @@ describe('WorkspaceService', () => {
       expect(mockRepository.save).toHaveBeenCalledWith(mockWorkspace);
     });
   });
+
+  describe('findOne', () => {
+    it('should return a workspace if found', async () => {
+      mockRepository.findOne = jest.fn().mockResolvedValue(mockWorkspace);
+
+      const result = await service.findOne('mock-uuid');
+
+      expect(result).toEqual(mockWorkspace);
+      expect(mockRepository.findOne).toHaveBeenCalledWith({
+        where: { uuid: 'mock-uuid' }
+      });
+    });
+
+    it('should throw NotFoundException if workspace not found', async () => {
+      mockRepository.findOne = jest.fn().mockResolvedValue(null);
+
+      await expect(service.findOne('mock-uuid')).rejects.toThrow(NotFoundException);
+      expect(mockRepository.findOne).toHaveBeenCalledWith({
+        where: { uuid: 'mock-uuid' }
+      });
+    });
+  })
 });
