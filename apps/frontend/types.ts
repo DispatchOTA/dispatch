@@ -22,3 +22,11 @@ export interface Deployment {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface ImageVersion {
+  uuid: string;
+  id: string;
+  description: string;
+  createdAt: string;
+  updatedAt: string;
+}

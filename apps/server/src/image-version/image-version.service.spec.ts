@@ -99,7 +99,7 @@ describe('ImageVersionService', () => {
         where: { uuid: 'imageUuid' }
       });
       expect(mockImageVersionRepository.find).toHaveBeenCalledWith({
-        where: { image: mockImage },
+        where: { image: { uuid: 'imageUuid' } },
         order: { createdAt: 'DESC' }
       });
     });

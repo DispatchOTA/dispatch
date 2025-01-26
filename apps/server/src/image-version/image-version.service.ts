@@ -31,7 +31,7 @@ export class ImageVersionService {
   async findAll(imageUuid: string): Promise<ImageVersion[]> {
     const image = await this.findImage(imageUuid);
     return this.imageVersionRepository.find({
-      where: { image },
+      where: { image: { uuid: imageUuid } },
       order: {
         createdAt: 'DESC'
       }
