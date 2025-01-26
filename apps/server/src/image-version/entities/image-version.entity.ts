@@ -1,3 +1,4 @@
+import { Workspace } from '../../workspace/entities/workspace.entity';
 import { Artifact } from '../../artifact/entities/artifact.entity';
 import { Deployment } from '../../deployment/entities/deployment.entity';
 import { Image } from '../../image/entities/image.entity';
@@ -36,4 +37,7 @@ export class ImageVersion {
 
   @OneToMany(() => Artifact, (artifact) => artifact.imageVersion)
   artifacts: Artifact[];
+
+  @ManyToOne(() => Workspace, (workspace) => workspace.imageVersions)
+  workspace: Workspace;
 }

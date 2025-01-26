@@ -7,7 +7,9 @@ import {
   UpdateDateColumn,
   CreateDateColumn,
   OneToMany,
+  ManyToOne,
 } from 'typeorm';
+import { Workspace } from '../../workspace/entities/workspace.entity';
 
 export enum DeviceState {
   UNKNOWN = 'unknown',
@@ -49,4 +51,7 @@ export class Device {
 
   @OneToMany(() => Deployment, (deployment) => deployment.device)
   deployments: Deployment[];
+
+  @ManyToOne(() => Workspace, (workspace) => workspace.devices)
+  workspace: Workspace;
 }

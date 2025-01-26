@@ -1,3 +1,4 @@
+import { Workspace } from '../../workspace/entities/workspace.entity';
 import { ImageVersion } from '../../image-version/entities/image-version.entity';
 import {
   Entity,
@@ -6,6 +7,7 @@ import {
   UpdateDateColumn,
   CreateDateColumn,
   OneToMany,
+  ManyToOne,
 } from 'typeorm';
 
 @Entity()
@@ -27,4 +29,7 @@ export class Image {
 
   @OneToMany(() => ImageVersion, (imageVersion) => imageVersion.image)
   versions: ImageVersion[];
+
+  @ManyToOne(() => Workspace, (workspace) => workspace.images)
+  workspace: Workspace;
 }

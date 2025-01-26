@@ -16,6 +16,7 @@ import {
   DownloadUpdateEnum,
   MaintenanceWindowEnum,
 } from '../../ddi/dtos/deployment-res.dto';
+import { Workspace } from '../../workspace/entities/workspace.entity';
 
 export enum DeploymentState {
   FINISHED = 'finished', // finished successfully
@@ -52,6 +53,9 @@ export class Deployment {
   @ManyToOne(() => ImageVersion, (imageVersion) => imageVersion.deployments)
   imageVersion: ImageVersion;
   
+  @ManyToOne(() => Workspace, (workspace) => workspace.deployments)
+  workspace: Workspace;
+
   getDownloadType(): DownloadUpdateEnum {
     return DownloadUpdateEnum.ATTEMPT;
   }
