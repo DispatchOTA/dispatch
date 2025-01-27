@@ -8,6 +8,7 @@ import { MAX_DESC_LEN, MAX_ID_LEN } from '../consts';
 import { MIN_ID_LEN } from '../consts';
 import { LayoutHeader } from '../components/LayoutHeader';
 import { Image } from '../../types';
+
 interface CreateImageDto {
   id: string;
   description: string;
@@ -67,6 +68,7 @@ const Page = () => {
       <LayoutHeader title='Images'>
         <CreateDialog 
           title="Create Image"
+          cta="Create image"
           description="Create a new image"
         >
           <CreateForm<CreateImageDto>
