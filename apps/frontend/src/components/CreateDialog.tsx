@@ -4,17 +4,18 @@ import { useState } from 'react';
 
 interface CreateDialogProps {
   title: string;
+  cta: string;
   description: string;
   children: React.ReactNode;
 }
 
-export const CreateDialog = ({ title, description, children }: CreateDialogProps) => {
+export const CreateDialog = ({ title, cta, description, children }: CreateDialogProps) => {
   const [open, setOpen] = useState(false);
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger asChild>
-        <Button>Create</Button>
+        <Button>{cta}</Button>
       </Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-black/40" />

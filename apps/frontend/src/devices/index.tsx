@@ -63,6 +63,7 @@ const Page = () => {
       <LayoutHeader title='Devices'>
         <CreateDialog 
           title="Create Device"
+          cta="Create device"
           description="Create a new device"
         >
           <CreateForm<CreateDeviceDto>
