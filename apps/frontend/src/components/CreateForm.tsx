@@ -1,4 +1,4 @@
-import { useForm, UseFormRegister, Path, FieldValues, RegisterOptions } from 'react-hook-form';
+import { useForm, UseFormRegister, Path, FieldValues, RegisterOptions, UseFormWatch } from 'react-hook-form';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { Button } from './Button';
@@ -9,7 +9,7 @@ export interface Field<T extends FieldValues> {
   name: Path<T>;
   label: string;
   validation?: RegisterOptions<T, Path<T>>;
-  render?: (register: UseFormRegister<T>) => React.ReactNode;
+  render?: (register: UseFormRegister<T>, watch?: UseFormWatch<T>) => React.ReactNode;
 }
 
 interface CreateFormProps<T extends FieldValues> {
@@ -28,6 +28,7 @@ export const CreateForm = <T extends FieldValues>({
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<T>({
     mode: 'onChange'
@@ -49,7 +50,7 @@ export const CreateForm = <T extends FieldValues>({
         <div key={field.name}>
           <Label>{field.label}</Label>
           {field.render ? (
-            field.render(register)
+            field.render(register, watch)
           ) : (
             <Input
               {...register(field.name, field.validation)}

@@ -1,13 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { DeploymentService } from './deployment.service';
+import { getRepositoryToken } from '@nestjs/typeorm';
 import { Deployment, DeploymentState } from './entities/deployment.entity';
-import { CreateDeploymentDto } from './dtos/create-deployment.dto';
-import { NotFoundException } from '@nestjs/common';
 import { Device } from '../device/entities/device.entity';
 import { ImageVersion } from '../image-version/entities/image-version.entity';
-import { createMockDevice, createMockImageVersion, createMockDeployment } from '../../test/factories';
+import { Repository } from 'typeorm';
+import { NotFoundException } from '@nestjs/common';
+import { createMockDeployment, createMockDevice, createMockImageVersion } from '../../test/factories';
 
 describe('DeploymentService', () => {
   let service: DeploymentService;
@@ -15,29 +14,9 @@ describe('DeploymentService', () => {
   let deviceRepository: Repository<Device>;
   let imageVersionRepository: Repository<ImageVersion>;
 
+  const mockDeployment = createMockDeployment();
   const mockDevice = createMockDevice();
-
   const mockImageVersion = createMockImageVersion();
-
-  const mockDeployment = createMockDeployment({
-    device: mockDevice,
-    imageVersion: mockImageVersion,
-  });
-
-  const mockDeploymentRepository = {
-    create: jest.fn(),
-    save: jest.fn(),
-    find: jest.fn(),
-    findOne: jest.fn()
-  };
-
-  const mockDeviceRepository = {
-    findOne: jest.fn()
-  };
-
-  const mockImageVersionRepository = {
-    findOne: jest.fn()
-  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -45,15 +24,22 @@ describe('DeploymentService', () => {
         DeploymentService,
         {
           provide: getRepositoryToken(Deployment),
-          useValue: mockDeploymentRepository,
+          useValue: {
+            find: jest.fn(),
+            save: jest.fn(),
+          },
         },
         {
           provide: getRepositoryToken(Device),
-          useValue: mockDeviceRepository,
+          useValue: {
+            findOne: jest.fn(),
+          },
         },
         {
           provide: getRepositoryToken(ImageVersion),
-          useValue: mockImageVersionRepository,
+          useValue: {
+            findOne: jest.fn(),
+          },
         },
       ],
     }).compile();
@@ -62,8 +48,6 @@ describe('DeploymentService', () => {
     deploymentRepository = module.get<Repository<Deployment>>(getRepositoryToken(Deployment));
     deviceRepository = module.get<Repository<Device>>(getRepositoryToken(Device));
     imageVersionRepository = module.get<Repository<ImageVersion>>(getRepositoryToken(ImageVersion));
-
-    jest.clearAllMocks();
   });
 
   it('should be defined', () => {
@@ -71,58 +55,64 @@ describe('DeploymentService', () => {
   });
 
   describe('create', () => {
-    const createDeploymentDto: CreateDeploymentDto = {
-      deviceUuid: 'deviceUuid',
-      imageVersionUuid: 'versionUuid'
+    const deviceId = 'deviceId';
+    const createDeploymentDto = {
+      imageId: 'imageId',
+      imageVersionId: 'versionId'
     };
 
-    it('should successfully create a deployment', async () => {
-      mockDeviceRepository.findOne.mockResolvedValue(mockDevice);
-      mockImageVersionRepository.findOne.mockResolvedValue(mockImageVersion);
-      mockDeploymentRepository.save.mockResolvedValue(mockDeployment);
+    it('should create a deployment successfully', async () => {
+      jest.spyOn(deviceRepository, 'findOne').mockResolvedValue(mockDevice);
+      jest.spyOn(imageVersionRepository, 'findOne').mockResolvedValue(mockImageVersion);
+      jest.spyOn(deploymentRepository, 'save').mockResolvedValue(mockDeployment);
 
-      const result = await service.create(createDeploymentDto);
-      
-      expect(result).toEqual(mockDeployment);
+      const result = await service.create(deviceId, createDeploymentDto);
+
       expect(deviceRepository.findOne).toHaveBeenCalledWith({
-        where: { uuid: createDeploymentDto.deviceUuid }
+        where: { uuid: deviceId }
       });
       expect(imageVersionRepository.findOne).toHaveBeenCalledWith({
-        where: { uuid: createDeploymentDto.imageVersionUuid }
+        where: { 
+          uuid: createDeploymentDto.imageVersionId,
+          image: { uuid: createDeploymentDto.imageId }
+        }
       });
-      expect(deploymentRepository.save).toHaveBeenCalledWith(
-        expect.objectContaining({
-          device: mockDevice,
-          imageVersion: mockImageVersion,
-          state: DeploymentState.SCHEDULED
-        })
-      );
+      expect(deploymentRepository.save).toHaveBeenCalledWith(expect.objectContaining({
+        device: mockDevice,
+        imageVersion: mockImageVersion,
+        state: DeploymentState.SCHEDULED
+      }));
+      expect(result).toEqual(mockDeployment);
     });
 
     it('should throw NotFoundException if device is not found', async () => {
-      mockDeviceRepository.findOne.mockResolvedValue(null);
+      jest.spyOn(deviceRepository, 'findOne').mockResolvedValue(null);
 
-      await expect(service.create(createDeploymentDto))
-        .rejects.toThrow(NotFoundException);
-      
+      await expect(service.create(deviceId, createDeploymentDto)).rejects.toThrow(
+        new NotFoundException('Device not found')
+      );
       expect(deviceRepository.findOne).toHaveBeenCalledWith({
-        where: { uuid: createDeploymentDto.deviceUuid }
+        where: { uuid: deviceId }
       });
+      expect(imageVersionRepository.findOne).not.toHaveBeenCalled();
       expect(deploymentRepository.save).not.toHaveBeenCalled();
     });
 
     it('should throw NotFoundException if image version is not found', async () => {
-      mockDeviceRepository.findOne.mockResolvedValue(mockDevice);
-      mockImageVersionRepository.findOne.mockResolvedValue(null);
+      jest.spyOn(deviceRepository, 'findOne').mockResolvedValue(mockDevice);
+      jest.spyOn(imageVersionRepository, 'findOne').mockResolvedValue(null);
 
-      await expect(service.create(createDeploymentDto))
-        .rejects.toThrow(NotFoundException);
-      
+      await expect(service.create(deviceId, createDeploymentDto)).rejects.toThrow(
+        new NotFoundException('Image version not found')
+      );
       expect(deviceRepository.findOne).toHaveBeenCalledWith({
-        where: { uuid: createDeploymentDto.deviceUuid }
+        where: { uuid: deviceId }
       });
       expect(imageVersionRepository.findOne).toHaveBeenCalledWith({
-        where: { uuid: createDeploymentDto.imageVersionUuid }
+        where: { 
+          uuid: createDeploymentDto.imageVersionId,
+          image: { uuid: createDeploymentDto.imageId }
+        }
       });
       expect(deploymentRepository.save).not.toHaveBeenCalled();
     });
@@ -130,22 +120,29 @@ describe('DeploymentService', () => {
 
   describe('findAll', () => {
     it('should return an array of deployments', async () => {
-      mockDeploymentRepository.find.mockResolvedValue([mockDeployment]);
+      const deployments = [mockDeployment];
+      jest.spyOn(deploymentRepository, 'find').mockResolvedValue(deployments);
 
       const result = await service.findAll();
-      expect(result).toEqual([mockDeployment]);
+
+      expect(result).toEqual(deployments);
       expect(deploymentRepository.find).toHaveBeenCalledWith({
-        order: { createdAt: 'DESC' }
+        order: {
+          createdAt: 'DESC'
+        }
       });
     });
 
-    it('should return an empty array when no deployments exist', async () => {
-      mockDeploymentRepository.find.mockResolvedValue([]);
+    it('should return an empty array if no deployments are found', async () => {
+      jest.spyOn(deploymentRepository, 'find').mockResolvedValue([]);
 
       const result = await service.findAll();
+
       expect(result).toEqual([]);
       expect(deploymentRepository.find).toHaveBeenCalledWith({
-        order: { createdAt: 'DESC' }
+        order: {
+          createdAt: 'DESC'
+        }
       });
     });
   });

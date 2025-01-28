@@ -34,42 +34,44 @@ describe('DeploymentController', () => {
     expect(controller).toBeDefined();
   });
 
-  describe('POST /deployments', () => {
+  describe('POST /devices/:deviceId/deployments', () => {
+    const deviceId = 'deviceId';
+    
     it('should create a new deployment', async () => {
       const createDeploymentDto: CreateDeploymentDto = {
-        deviceUuid: 'deviceUuid',
-        imageVersionUuid: 'versionUuid'
+        imageId: 'imageUuid',
+        imageVersionId: 'versionUuid'
       };
 
       mockDeploymentService.create.mockResolvedValue(mockDeployment);
 
-      const result = await controller.create(createDeploymentDto);
+      const result = await controller.create(deviceId, createDeploymentDto);
       expect(result).toEqual(mockDeployment);
-      expect(service.create).toHaveBeenCalledWith(createDeploymentDto);
+      expect(service.create).toHaveBeenCalledWith(deviceId, createDeploymentDto);
     });
 
     it('should return 404 if device is not found', async () => {
       const createDeploymentDto: CreateDeploymentDto = {
-        deviceUuid: 'nonexistentDeviceUuid',
-        imageVersionUuid: 'versionUuid'
+        imageId: 'imageUuid',
+        imageVersionId: 'versionUuid'
       };
 
       mockDeploymentService.create.mockRejectedValue(new NotFoundException('Device not found'));
 
-      await expect(controller.create(createDeploymentDto)).rejects.toThrow(NotFoundException);
-      expect(service.create).toHaveBeenCalledWith(createDeploymentDto);
+      await expect(controller.create(deviceId, createDeploymentDto)).rejects.toThrow(NotFoundException);
+      expect(service.create).toHaveBeenCalledWith(deviceId, createDeploymentDto);
     });
 
     it('should return 404 if image version is not found', async () => {
       const createDeploymentDto: CreateDeploymentDto = {
-        deviceUuid: 'nonexistentDeviceUuid',
-        imageVersionUuid: 'versionUuid'
+        imageId: 'imageUuid',
+        imageVersionId: 'versionUuid'
       };
 
       mockDeploymentService.create.mockRejectedValue(new NotFoundException('Image version not found'));
 
-      await expect(controller.create(createDeploymentDto)).rejects.toThrow(NotFoundException);
-      expect(service.create).toHaveBeenCalledWith(createDeploymentDto);
+      await expect(controller.create(deviceId, createDeploymentDto)).rejects.toThrow(NotFoundException);
+      expect(service.create).toHaveBeenCalledWith(deviceId, createDeploymentDto);
     });
   });
 

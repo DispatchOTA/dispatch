@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { DeploymentService } from './deployment.service';
 import { Deployment } from './entities/deployment.entity';
 import { CreateDeploymentDto } from './dtos/create-deployment.dto';
@@ -7,9 +7,9 @@ import { CreateDeploymentDto } from './dtos/create-deployment.dto';
 export class DeploymentController {
   constructor(private readonly deploymentService: DeploymentService) {}
 
-  @Post('deployments')
-  async create(@Body() createDeploymentDto: CreateDeploymentDto) {
-    return this.deploymentService.create(createDeploymentDto);
+  @Post('/devices/:deviceId/deployments')
+  async create(@Param('deviceId') deviceId: string, @Body() createDeploymentDto: CreateDeploymentDto) {
+    return this.deploymentService.create(deviceId, createDeploymentDto);
   }
 
   @Get('deployments')

@@ -12,6 +12,14 @@ export const Input = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputE
   />
 ));
 
+export const Select = forwardRef<HTMLSelectElement, InputHTMLAttributes<HTMLSelectElement>>((props, ref) => (
+  <select
+    ref={ref}
+    className='w-full p-2 border rounded focus:outline-none focus:ring-1'
+    {...props}
+  />
+));
+
 export const Label = ({children}: {children: React.ReactNode}) => {
   return <label className='block text-sm font-medium mb-1'>{children}</label>;
 }

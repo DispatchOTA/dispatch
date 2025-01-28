@@ -20,23 +20,21 @@ export class DeploymentService {
     private readonly imageVersionRepository: Repository<ImageVersion>,
   ) {}
 
-  async create(createDeploymentDto: CreateDeploymentDto): Promise<Deployment> {
+  async create(deviceId: string, createDeploymentDto: CreateDeploymentDto): Promise<Deployment> {
     const device = await this.deviceRepository.findOne({
-      where: { uuid: createDeploymentDto.deviceUuid }
+      where: { uuid: deviceId }
     });
     if (!device) {
-      this.logger.error(`Device not found: ${createDeploymentDto.deviceUuid}`);
+      this.logger.error(`Device not found: ${deviceId}`);
       throw new NotFoundException(`Device not found`);
     }
-
     const imageVersion = await this.imageVersionRepository.findOne({
-      where: { uuid: createDeploymentDto.imageVersionUuid }
+      where: { uuid: createDeploymentDto.imageVersionId, image: { uuid: createDeploymentDto.imageId } }
     });
     if (!imageVersion) {
-      this.logger.error(`Image version not found: ${createDeploymentDto.imageVersionUuid}`);
+      this.logger.error(`Image version not found: ${createDeploymentDto.imageVersionId}`);
       throw new NotFoundException(`Image version not found`);
     }
-
     const deployment = new Deployment();
     deployment.device = device;
     deployment.imageVersion = imageVersion;
