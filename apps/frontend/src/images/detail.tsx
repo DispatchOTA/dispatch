@@ -7,7 +7,7 @@ import { ErrorState } from '../components/AsyncUtils';
 import { DateTime } from '../components/DateTime';
 import { DetailView } from '../components/DetailView';
 import { DetailField } from '../components/DetailView';
-import { Image, ImageVersion } from '../../types';
+import { Image, ImageVersion } from '../types';
 import { AsyncTable, AsyncTableColumn } from '../components/AsyncTable';
 import { CreateForm, Field } from '../components/CreateForm';
 import { CreateDialog } from '../components/CreateDialog';
@@ -15,13 +15,7 @@ import { MAX_DESC_LEN } from '../consts';
 import { MAX_ID_LEN } from '../consts';
 import { MIN_ID_LEN } from '../consts';
 import { UseFormRegister } from 'react-hook-form';
-
-
-interface CreateImageVersionDto {
-  id: string;
-  description: string;
-  file: FileList;
-}
+import { CreateImageVersionDto } from '../types';
 
 const imageVersionFields: Field<CreateImageVersionDto>[] = [
   {

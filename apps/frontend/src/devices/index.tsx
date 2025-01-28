@@ -8,12 +8,7 @@ import { CreateForm } from '../components/CreateForm';
 import type { Field } from '../components/CreateForm';
 import { MAX_DESC_LEN, MAX_ID_LEN, MIN_ID_LEN } from '../consts';
 import { LayoutHeader } from '../components/LayoutHeader';
-import { Device } from '../../types';
-
-interface CreateDeviceDto {
-  id: string;
-  description: string;
-}
+import { Device, CreateDeviceDto } from '../types';
 
 const deviceFields: Field<CreateDeviceDto>[] = [
   {
