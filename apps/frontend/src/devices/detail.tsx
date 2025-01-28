@@ -4,13 +4,17 @@ import { LayoutHeader } from '../components/LayoutHeader';
 import { Column } from '../components/Column';
 import { Card } from '../components/Card';
 import { ErrorState } from '../components/AsyncUtils';
-import { Deployment, Device } from '../../types';
+import { Deployment, Device, CreateDeploymentDto } from '../types';
 import { DateTime } from '../components/DateTime';
 import { Pill } from '../components/Pill';
 import { toSentenceCase } from '../utils';
 import { AsyncTable, AsyncTableColumn } from '../components/AsyncTable';
 import { DetailView } from '../components/DetailView';
 import { DetailField } from '../components/DetailView';
+import { CreateForm, Field } from '../components/CreateForm';
+import { CreateDialog } from '../components/CreateDialog';
+import { UseFormRegister, UseFormWatch } from 'react-hook-form';
+import { ImageSelect, VersionSelect } from '../components/FormUtils';
 
 const deviceDetailFields: DetailField<Device>[] = [
   {
@@ -39,6 +43,24 @@ const deviceDetailFields: DetailField<Device>[] = [
   }
 ];
 
+const deploymentFields: Field<CreateDeploymentDto>[] = [
+  {
+    name: 'imageId',
+    label: 'Image',
+    validation: { required: 'Image is required' },
+    render: (register: UseFormRegister<CreateDeploymentDto>) => (
+      <ImageSelect register={register} />
+    )
+  },
+  {
+    name: 'imageVersionId',
+    label: 'Version',
+    validation: { required: 'Version is required' },
+    render: (register: UseFormRegister<CreateDeploymentDto>, watch?: UseFormWatch<CreateDeploymentDto>) => 
+      watch ? <VersionSelect register={register} watch={watch} /> : null
+  }
+];
+
 const deploymentColumns: AsyncTableColumn<Deployment>[] = [
   { 
     header: 'State', 
@@ -57,7 +79,20 @@ const DeviceDetail = () => {
 
   return (
     <Layout>
-      <LayoutHeader title='Device' />
+      <LayoutHeader title='Device'>
+        <CreateDialog
+          title="Deploy to device"
+          cta="Deploy"
+          description="Deploy a new image version to the device"
+          >
+            <CreateForm<CreateDeploymentDto>
+              endpoint={`/devices/${id}/deployments`}
+              queryKey={`device-${id}-deployments`}
+              fields={deploymentFields}
+              onSuccess={() => {}}
+            />
+          </CreateDialog>
+      </LayoutHeader>
       <Column>
         <Card title='Detail'>
           <DetailView<Device>

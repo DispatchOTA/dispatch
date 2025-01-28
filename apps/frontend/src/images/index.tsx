@@ -7,13 +7,8 @@ import { UseFormRegister } from 'react-hook-form';
 import { MAX_DESC_LEN, MAX_ID_LEN } from '../consts';
 import { MIN_ID_LEN } from '../consts';
 import { LayoutHeader } from '../components/LayoutHeader';
-import { Image } from '../../types';
-
-interface CreateImageDto {
-  id: string;
-  description: string;
-  file: FileList;
-}
+import { Image } from '../types';
+import { CreateImageDto } from '../types';
 
 const imageFields: Field<CreateImageDto>[] = [
   {

@@ -3,9 +3,9 @@ import { IsNotEmpty, IsUUID } from "class-validator";
 export class CreateDeploymentDto {
   @IsUUID()
   @IsNotEmpty()
-  deviceUuid: string;
+  imageId: string;
 
   @IsUUID()
   @IsNotEmpty()
-  imageVersionUuid: string;
+  imageVersionId: string;
 }

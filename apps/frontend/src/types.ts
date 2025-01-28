@@ -16,6 +16,28 @@ export interface Image {
   updatedAt: string;
 }
 
+export interface CreateDeviceDto {
+  id: string;
+  description: string;
+}
+
+export interface CreateImageDto {
+  id: string;
+  description: string;
+  file: FileList;
+}
+
+export interface CreateImageVersionDto {
+  id: string;
+  description: string;
+  file: FileList;
+}
+
+export interface CreateDeploymentDto {
+  imageId: string;
+  imageVersionId: string;
+}
+
 export interface Deployment {
   uuid: string;
   state: string;
