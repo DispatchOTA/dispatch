@@ -76,7 +76,8 @@ describe('ImageService', () => {
       const result = await service.findAll();
       expect(result).toEqual([mockImage]);
       expect(mockRepository.find).toHaveBeenCalledWith({
-        order: { createdAt: 'DESC' }
+        order: { createdAt: 'DESC' },
+        relations: { versions: true }
       });
     });
 

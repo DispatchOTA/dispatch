@@ -14,6 +14,7 @@ export interface Image {
   description: string;
   createdAt: string;
   updatedAt: string;
+  versions: ImageVersion[];
 }
 
 export interface CreateDeviceDto {
@@ -43,6 +44,7 @@ export interface Deployment {
   state: string;
   createdAt: string;
   updatedAt: string;
+  imageVersion: ImageVersion;
 }
 
 export interface ImageVersion {
@@ -51,4 +53,5 @@ export interface ImageVersion {
   description: string;
   createdAt: string;
   updatedAt: string;
+  image: Image;
 }
