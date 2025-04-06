@@ -7,7 +7,8 @@ import { CreateImageDto } from './dtos/create-image.dto';
 import { UpdateImageDto } from './dtos/update-image.dto';
 import { NotFoundException } from '@nestjs/common';
 import { ImageVersion } from '../image-version/entities/image-version.entity';
-import { createMockImage } from '../../test/factories';
+import { createMockDevice, createMockImage, createMockImageVersion } from '../../test/factories';
+import { DeploymentState } from '../deployment/entities/deployment.entity';
 
 describe('ImageService', () => {
   let service: ImageService;
@@ -136,6 +137,89 @@ describe('ImageService', () => {
       await expect(service.update('uuid', updateImageDto)).rejects.toThrow(NotFoundException);
       expect(mockRepository.findOne).toHaveBeenCalledWith({
         where: { uuid: 'uuid' }
+      });
+    });
+  });
+
+  describe('findDeployments', () => {
+    it('should return deployments for an image', async () => {
+      const mockImageVersion = createMockImageVersion();
+      const mockDeployments = [
+        {
+          uuid: 'deployment-uuid-1',
+          state: DeploymentState.SCHEDULED,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          device: createMockDevice(),
+          imageVersion: mockImageVersion
+        }
+      ];
+
+      const imageWithVersions = {
+        ...mockImage,
+        versions: [{
+          ...mockImageVersion,
+          deployments: mockDeployments
+        }]
+      };
+
+      mockRepository.findOne.mockResolvedValue(imageWithVersions);
+
+      const result = await service.findDeployments('uuid');
+      expect(result).toEqual(mockDeployments);
+      expect(mockRepository.findOne).toHaveBeenCalledWith({
+        where: { uuid: 'uuid' },
+        relations: ['versions', 'versions.deployments', 'versions.deployments.device', 'versions.deployments.imageVersion'],
+        relationLoadStrategy: 'query'
+      });
+    });
+
+    it('should return empty array if image has no versions', async () => {
+      const imageWithNoVersions = {
+        ...mockImage,
+        versions: []
+      };
+
+      mockRepository.findOne.mockResolvedValue(imageWithNoVersions);
+
+      const result = await service.findDeployments('uuid');
+      expect(result).toEqual([]);
+      expect(mockRepository.findOne).toHaveBeenCalledWith({
+        where: { uuid: 'uuid' },
+        relations: ['versions', 'versions.deployments', 'versions.deployments.device', 'versions.deployments.imageVersion'],
+        relationLoadStrategy: 'query'
+      });
+    });
+
+    it('should return empty array if image versions has no deployments', async () => {
+      const mockImageVersion = createMockImageVersion();
+      const imageWithVersionsNoDeployments = {
+        ...mockImage,
+        versions: [{
+          ...mockImageVersion,
+          deployments: []
+        }]
+      };
+
+      mockRepository.findOne.mockResolvedValue(imageWithVersionsNoDeployments);
+
+      const result = await service.findDeployments('uuid');
+      expect(result).toEqual([]);
+      expect(mockRepository.findOne).toHaveBeenCalledWith({
+        where: { uuid: 'uuid' },
+        relations: ['versions', 'versions.deployments', 'versions.deployments.device', 'versions.deployments.imageVersion'],
+        relationLoadStrategy: 'query'
+      });
+    });
+
+    it('should throw NotFoundException when image is not found', async () => {
+      mockRepository.findOne.mockResolvedValue(null);
+
+      await expect(service.findDeployments('uuid')).rejects.toThrow(NotFoundException);
+      expect(mockRepository.findOne).toHaveBeenCalledWith({
+        where: { uuid: 'uuid' },
+        relations: ['versions', 'versions.deployments', 'versions.deployments.device', 'versions.deployments.imageVersion'],
+        relationLoadStrategy: 'query'
       });
     });
   });

@@ -89,7 +89,7 @@ const imageVersionColumns: AsyncTableColumn<ImageVersion>[] = [
 const deploymentColumns: AsyncTableColumn<Deployment>[] = [
   {
     header: 'Version',
-    accessor: (deployment) => deployment.imageVersion.id
+    accessor: (deployment: Deployment) => deployment.imageVersion.id
   },
   { 
     header: 'State', 
