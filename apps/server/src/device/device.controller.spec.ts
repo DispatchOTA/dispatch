@@ -132,7 +132,6 @@ describe('DeviceController', () => {
     });
   });
 
-
   describe('PUT /devices/:uuid', () => {
     const updateDeviceDto: UpdateDeviceDto = {
       id: 'Updated Device',

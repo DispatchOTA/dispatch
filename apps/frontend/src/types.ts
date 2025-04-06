@@ -44,6 +44,7 @@ export interface Deployment {
   state: string;
   createdAt: string;
   updatedAt: string;
+  device: Device;
   imageVersion: ImageVersion;
 }
 
