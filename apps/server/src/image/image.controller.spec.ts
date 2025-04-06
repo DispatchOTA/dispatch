@@ -4,21 +4,38 @@ import { ImageService } from './image.service';
 import { CreateImageDto } from './dtos/create-image.dto';
 import { UpdateImageDto } from './dtos/update-image.dto';
 import { NotFoundException } from '@nestjs/common';
-import { createMockImage } from '../../test/factories';
+import { createMockDeployment, createMockImage, createMockImageVersion } from '../../test/factories';
+import { Deployment } from '../deployment/entities/deployment.entity';
 
 describe('ImageController', () => {
   let controller: ImageController;
   let service: ImageService;
 
-  const mockImage = createMockImage();
-  
   const mockImageService = {
     create: jest.fn(),
     findAll: jest.fn(),
     findOne: jest.fn(),
     update: jest.fn(),
     delete: jest.fn(),
+    findDeployments: jest.fn()
   };
+
+  const imageVersion1 = createMockImageVersion();
+  const imageVersion2 = createMockImageVersion();
+  const mockImage = createMockImage({
+    versions: [
+      imageVersion1,
+      imageVersion2
+    ]
+  });
+  const mockDeployments: Deployment[] = [
+    createMockDeployment({
+      imageVersion: imageVersion1,
+    }),
+    createMockDeployment({
+      imageVersion: imageVersion2,
+    }),
+  ];
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -118,4 +135,34 @@ describe('ImageController', () => {
       ).rejects.toThrow(NotFoundException);
     });
   });
+
+
+  describe('GET /images/:uuid/deployments', () => {
+    it('should return deployments for an image', async () => {
+      mockImageService.findDeployments.mockResolvedValue(mockDeployments);
+
+      const result = await controller.findDeployments({ uuid: 'uuid' });
+      expect(result).toEqual(mockDeployments);
+      expect(service.findDeployments).toHaveBeenCalledWith('uuid');
+    });
+
+    it('should return an empty array if device has no deployments', async () => {
+      mockImageService.findDeployments.mockResolvedValue([]);
+
+      const result = await controller.findDeployments({ uuid: 'uuid' });
+      expect(result).toEqual([]);
+      expect(service.findDeployments).toHaveBeenCalledWith('uuid');
+    });
+
+    it('should return a 404 error if the device is not found', async () => {
+      mockImageService.findDeployments.mockRejectedValue(
+        new NotFoundException('Image not found'),
+      );
+
+      await expect(controller.findDeployments({ uuid: 'uuid' })).rejects.toThrow(
+        NotFoundException,
+      );
+    });
+  });
+
 });

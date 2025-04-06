@@ -38,6 +38,26 @@ export class ImageService {
       }
     });
   }
+  async findDeployments(uuid: string) {
+    const image = await this.imageRepository.findOne({
+      where: { uuid },
+      relations: [
+        'versions',
+        'versions.deployments',
+        'versions.deployments.device',
+        'versions.deployments.imageVersion'
+      ],
+      relationLoadStrategy: 'query'
+    });
+    if (!image) {
+      this.logger.error(`Image not found: ${uuid}`);
+      throw new NotFoundException('Image not found');
+    }
+
+    const deployments = image.versions.flatMap(version => version.deployments);
+    return deployments;
+  }
+
 
   async update(uuid: string, updateImageDto: UpdateImageDto): Promise<Image> {
     const image = await this.findImage(uuid);

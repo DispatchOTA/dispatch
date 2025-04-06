@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { ImageVersionService } from './image-version.service';
 import { ImageVersion } from './entities/image-version.entity';
-import { UUIDParamDto } from '../common/dtos/uuiid-param.dto';
+import { UUIDParamDto } from '../common/dtos/uuid-param.dto';
 import { CreateImageVersionDto } from './dtos/create-image-version.dto';
 import { UpdateImageVersionDto } from './dtos/update-image-version.dto';
 import { MessageDto } from '../common/dtos/message.dto';

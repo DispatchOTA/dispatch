@@ -7,7 +7,7 @@ import { ErrorState } from '../components/AsyncUtils';
 import { DateTime } from '../components/DateTime';
 import { DetailView } from '../components/DetailView';
 import { DetailField } from '../components/DetailView';
-import { Image, ImageVersion } from '../types';
+import { Deployment, Image, ImageVersion } from '../types';
 import { AsyncTable, AsyncTableColumn } from '../components/AsyncTable';
 import { CreateForm, Field } from '../components/CreateForm';
 import { CreateDialog } from '../components/CreateDialog';
@@ -16,6 +16,9 @@ import { MAX_ID_LEN } from '../consts';
 import { MIN_ID_LEN } from '../consts';
 import { UseFormRegister } from 'react-hook-form';
 import { CreateImageVersionDto } from '../types';
+import { Pill } from '../components/Pill';
+import { toSentenceCase } from '../utils';
+import { TextLink } from '../components/TextLink';
 
 const imageVersionFields: Field<CreateImageVersionDto>[] = [
   {
@@ -83,6 +86,25 @@ const imageVersionColumns: AsyncTableColumn<ImageVersion>[] = [
   }
 ];
 
+const deploymentColumns: AsyncTableColumn<Deployment>[] = [
+  {
+    header: 'Version',
+    accessor: (deployment: Deployment) => deployment.imageVersion.id
+  },
+  { 
+    header: 'State', 
+    accessor: (deployment) => <Pill>{toSentenceCase(deployment.state)}</Pill>
+  },
+  {
+    header: 'Device',
+    accessor: (deployment) => <TextLink to={`/devices/${deployment.device.uuid}`}>{deployment.device.id}</TextLink>
+  },
+  {
+    header: 'Created',
+    accessor: (deployment) => <DateTime date={deployment.createdAt} />
+  },
+];
+
 const ImageDetail = () => {
   const { id } = useParams();
 
@@ -120,6 +142,15 @@ const ImageDetail = () => {
             columns={imageVersionColumns}
             emptyMessage='No versions found'
             errorMessage='Error loading versions'
+          />
+        </Card>
+        <Card title='Deployments'>
+          <AsyncTable<Deployment>
+            queryKey={`image-${id}-deployments`}
+            endpoint={`/images/${id}/deployments`}
+            columns={deploymentColumns}
+            emptyMessage='No deployments found'
+            errorMessage='Error loading deployments'
           />
         </Card>
       </Column>

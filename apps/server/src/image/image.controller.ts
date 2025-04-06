@@ -29,4 +29,10 @@ export class ImageController {
   async update(@Param() params: UUIDParamDto, @Body() updateImageDto: UpdateImageDto) {
     return this.imageService.update(params.uuid, updateImageDto);
   }
+
+  @Get('images/:uuid/deployments')
+  async findDeployments(@Param() params: UUIDParamDto) {
+    return this.imageService.findDeployments(params.uuid);
+  }
+
 }
