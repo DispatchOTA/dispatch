@@ -3,24 +3,17 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { WorkspaceService } from './workspace.service';
 import { Workspace } from './entities/workspace.entity';
-import { CreateWorkspaceDto } from './dtos/create-workspace.dto';
+import { WorkspaceDetailDto } from './dtos/workspace-detail.dto';
 import { NotFoundException } from '@nestjs/common';
+import { DEV_WORKSPACE_ID } from '../common';
+import { createMockWorkspace } from '../../test/factories';
 
 describe('WorkspaceService', () => {
   let service: WorkspaceService;
   let repository: Repository<Workspace>;
 
-  const mockWorkspace = {
-    uuid: 'mock-uuid',
-    id: 'test-workspace',
-    defaultPollingTime: '00:10:00',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  };
-
+  const mockWorkspace = createMockWorkspace();
   const mockRepository = {
-    create: jest.fn(),
-    save: jest.fn(),
     findOne: jest.fn(),
   };
 
@@ -37,50 +30,30 @@ describe('WorkspaceService', () => {
 
     service = module.get<WorkspaceService>(WorkspaceService);
     repository = module.get<Repository<Workspace>>(getRepositoryToken(Workspace));
-    jest.clearAllMocks();
   });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
 
-  describe('create', () => {
-    it('should successfully create a workspace', async () => {
-      const createWorkspaceDto: CreateWorkspaceDto = {
-        id: 'test-workspace',
-        defaultPollingTime: '00:10:00'
-      };
+  describe('findOne', () => {
+    it('should return a workspace detail dto', async () => {
+      mockRepository.findOne.mockResolvedValue(mockWorkspace);
 
-      mockRepository.create.mockReturnValue(mockWorkspace);
-      mockRepository.save.mockResolvedValue(mockWorkspace);
+      const result = await service.findOne('test-uuid');
+      expect(result).toBeInstanceOf(WorkspaceDetailDto);
+      expect(repository.findOne).toHaveBeenCalledWith({
+        where: { uuid: DEV_WORKSPACE_ID },
+      });
+    });
 
-      const result = await service.create(createWorkspaceDto);
+    it('should throw NotFoundException when workspace is not found', async () => {
+      mockRepository.findOne.mockResolvedValue(null);
 
-      expect(result).toEqual(mockWorkspace);
-      expect(mockRepository.create).toHaveBeenCalledWith(createWorkspaceDto);
-      expect(mockRepository.save).toHaveBeenCalledWith(mockWorkspace);
+      await expect(service.findOne('test-uuid')).rejects.toThrow(NotFoundException);
+      expect(repository.findOne).toHaveBeenCalledWith({
+        where: { uuid: DEV_WORKSPACE_ID },
+      });
     });
   });
-
-  describe('findOne', () => {
-    it('should return a workspace if found', async () => {
-      mockRepository.findOne = jest.fn().mockResolvedValue(mockWorkspace);
-
-      const result = await service.findOne('mock-uuid');
-
-      expect(result).toEqual(mockWorkspace);
-      expect(mockRepository.findOne).toHaveBeenCalledWith({
-        where: { uuid: 'mock-uuid' }
-      });
-    });
-
-    it('should throw NotFoundException if workspace not found', async () => {
-      mockRepository.findOne = jest.fn().mockResolvedValue(null);
-
-      await expect(service.findOne('mock-uuid')).rejects.toThrow(NotFoundException);
-      expect(mockRepository.findOne).toHaveBeenCalledWith({
-        where: { uuid: 'mock-uuid' }
-      });
-    });
-  })
 });

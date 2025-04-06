@@ -22,3 +22,7 @@ export const POLLING_TIME_REGEX = /^([0-9]{2}):([0-9]{2}):([0-9]{2})$/; // HH:MM
 export const DEFAULT_POLLING_TIME = '01:00:00'; // 1 hour
 export const DEFAULT_DEV_ORIGIN = 'http://localhost:3000';
 export const DEFAULT_DEV_PORT = 3000;
+
+// dev data
+export const DEV_WORKSPACE_ID = '00000000-0000-0000-0000-000000000000';
+export const DEV_WORKSPACE_NAME = 'Development';

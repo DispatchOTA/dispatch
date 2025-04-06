@@ -3,7 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Home from './home';
 import Devices from './devices';
 import Images from './images';
-import Workspace from './workspace';
+import WorkspaceDetail from './workspace';
 import DeviceDetail from './devices/detail';
 import ImageDetail from './images/detail';
 
@@ -19,7 +19,7 @@ const App = () => {
           <Route path='/devices/:id' element={<DeviceDetail />} />
           <Route path='/images' element={<Images />} />
           <Route path='/images/:id' element={<ImageDetail />} />
-          <Route path='/workspace' element={<Workspace />} />
+          <Route path='/workspace' element={<WorkspaceDetail />} />
         </Routes>
       </BrowserRouter>
     </QueryClientProvider>
