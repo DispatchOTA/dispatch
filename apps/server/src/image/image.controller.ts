@@ -1,10 +1,9 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { ImageService } from './image.service';
 import { Image } from './entities/image.entity';
 import { UUIDParamDto } from '../common/dtos/uuid-param.dto';
 import { CreateImageDto } from './dtos/create-image.dto';
 import { UpdateImageDto } from './dtos/update-image.dto';
-import { MessageDto } from '../common/dtos/message.dto';
 
 @Controller()
 export class ImageController {

@@ -1,3 +1,11 @@
+export interface Workspace {
+  id: string;
+  createdAt: string;
+  defaultPollingTime: string;
+  numDevices: number;
+  numImages: number;
+}
+
 export interface Device {
   uuid: string;
   id: string;
