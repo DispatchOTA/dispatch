@@ -49,7 +49,7 @@ export class DeviceService {
   async findDeployments(uuid: string) {
     const device = await this.deviceRepository.findOne({
       where: { uuid },
-      relations: ['deployments'],
+      relations: ['deployments', 'deployments.imageVersion', 'deployments.imageVersion.image'],
       relationLoadStrategy: 'query'
     });
     if (!device) {

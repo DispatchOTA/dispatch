@@ -173,7 +173,7 @@ describe('DeviceService', () => {
       expect(mockRepository.findOne).toHaveBeenCalledTimes(1);
       expect(mockRepository.findOne).toHaveBeenLastCalledWith({
         where: { uuid: 'uuid' },
-        relations: ['deployments'],
+        relations: ['deployments', 'deployments.imageVersion', 'deployments.imageVersion.image'],
         relationLoadStrategy: 'query',
       });
     });
@@ -191,7 +191,7 @@ describe('DeviceService', () => {
       expect(mockRepository.findOne).toHaveBeenCalledTimes(1);
       expect(mockRepository.findOne).toHaveBeenLastCalledWith({
         where: { uuid: 'uuid' },
-        relations: ['deployments'],
+        relations: ['deployments', 'deployments.imageVersion', 'deployments.imageVersion.image'],
         relationLoadStrategy: 'query',
       });
     });
@@ -203,7 +203,7 @@ describe('DeviceService', () => {
       expect(mockRepository.findOne).toHaveBeenCalledTimes(1);
       expect(mockRepository.findOne).toHaveBeenLastCalledWith({
         where: { uuid: 'uuid' },
-        relations: ['deployments'],
+        relations: ['deployments', 'deployments.imageVersion', 'deployments.imageVersion.image'],
         relationLoadStrategy: 'query',
       });
     });

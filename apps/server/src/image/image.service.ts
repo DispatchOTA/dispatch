@@ -32,6 +32,9 @@ export class ImageService {
     return this.imageRepository.find({
       order: {
         createdAt: 'DESC'
+      },
+      relations: {
+        versions: true
       }
     });
   }

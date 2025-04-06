@@ -15,6 +15,7 @@ import { CreateForm, Field } from '../components/CreateForm';
 import { CreateDialog } from '../components/CreateDialog';
 import { UseFormRegister, UseFormWatch } from 'react-hook-form';
 import { ImageSelect, VersionSelect } from '../components/FormUtils';
+import { TextLink } from '../components/TextLink';
 
 const deviceDetailFields: DetailField<Device>[] = [
   {
@@ -69,6 +70,10 @@ const deploymentColumns: AsyncTableColumn<Deployment>[] = [
   {
     header: 'Created',
     accessor: (deployment) => <DateTime date={deployment.createdAt} />
+  },
+  {
+    header: 'Image',
+    accessor: (deployment) => <TextLink to={`/images/${deployment.imageVersion.image.uuid}`}>{deployment.imageVersion.image.id} ({deployment.imageVersion.id})</TextLink>
   },
 ];
 

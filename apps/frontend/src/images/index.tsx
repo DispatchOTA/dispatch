@@ -52,6 +52,10 @@ const imageColumns: AsyncTableColumn<Image>[] = [
     accessor: 'description'
   },
   { 
+    header: 'Versions', 
+    accessor: (image) => image.versions.length
+  },
+  { 
     header: 'Created', 
     accessor: (image) => <DateTime date={image.createdAt} />
   },
