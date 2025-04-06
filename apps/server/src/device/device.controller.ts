@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { DeviceService } from './device.service';
 import { Device } from './entities/device.entity';
-import { UUIDParamDto } from '../common/dtos/uuiid-param.dto';
+import { UUIDParamDto } from '../common/dtos/uuid-param.dto';
 import { CreateDeviceDto } from './dtos/create-device.dto';
 import { UpdateDeviceDto } from './dtos/update-device.dto';
 import { MessageDto } from '../common/dtos/message.dto';
